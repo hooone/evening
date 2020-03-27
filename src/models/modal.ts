@@ -1,3 +1,4 @@
+import { message } from 'antd'
 import { getLocale } from 'umi';
 import reqwest from 'reqwest'
 import { EffectsCommandMap } from 'dva'
@@ -46,10 +47,12 @@ export default {
             };
         },
         loading(state: modalStateProps, action: modalStateProps) {
-            let newState = Object.assign(state)
-            newState.confirmLoading = action.confirmLoading
-            newState.record = action.record
-            return newState
+            return {
+                visible: state.visible,
+                confirmLoading: action.confirmLoading,
+                action: action.action,
+                record: action.record,
+            }
         },
         cancel(state: modalStateProps) {
             return {
@@ -66,7 +69,6 @@ export default {
             //     this.props.handleCancel();
             //     return;
             // }
-            yield handler.put({ type: 'loading', confirmLoading: true, record: action.formdata });
             if (action.action.Type === "READ") {
                 yield handler.put({
                     type: 'cancel',
@@ -85,6 +87,12 @@ export default {
                 });
             }
             else {
+                action.action.Parameters.forEach(
+                    (parameter, idx) => {
+                        parameter.Default = action.formdata[parameter.Field.Name]
+                    }
+                )
+                yield handler.put({ type: 'loading', action: action.action, confirmLoading: true, record: action.formdata });
                 //执行动作
                 let actionData: testDataProps = {
                     __CardId: 0,
@@ -136,7 +144,10 @@ export default {
                     }
                 }
                 else {
-                    yield handler.put({ type: 'loading', loading: false, record: action.formdata });
+                    if (data.Message) {
+                        message.error(data.Message);
+                    }
+                    yield handler.put({ type: 'loading', action: action.action, confirmLoading: false, record: action.formdata });
                 }
             }
 

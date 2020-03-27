@@ -1,6 +1,12 @@
 import { EffectsCommandMap } from 'dva'
-import { contextMenuStateProps } from "@/interfaces"
 
+export interface contextMenuStateProps {
+    visible: boolean,
+    menu: string,
+    left: number,
+    top: number,
+    record: any,
+}
 export default {
     namespace: 'contextMenu',
     state: { visible: false, menu: "", left: 0, top: 0, record: {} },
@@ -357,7 +363,7 @@ export default {
                     {
                         ParameterID: 'Name_updateNode',
                         Default: action.record.name,
-                        IsEditable: true,
+                        IsEditable: action.record.name !== "home",
                         IsVisible: true,
                         Field: {
                             Name: 'Name',

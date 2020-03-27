@@ -24,6 +24,13 @@ func GetCards(c *models.ReqContext, form dtos.GetCardsForm) Response {
 			OrgId:    c.OrgId,
 		}
 		if err := bus.Dispatch(&pageQuery); err != nil {
+			if err == models.ErrPageNotFound {
+				result404 := new(CommonResult)
+				result404.Data = make([]*models.Card, 0)
+				result404.Success = false
+				result404.Message = "404"
+				return JSON(200, result404)
+			}
 			return Error(500, "Failed to get page", err)
 		}
 		query := models.GetCardsQuery{
@@ -317,7 +324,7 @@ func CreateCard(c *models.ReqContext, form dtos.CreateCardForm, lang dtos.Locale
 		Style:  "TABLE",
 		Seq:    seq,
 		Pos:    0,
-		Width:  6,
+		Width:  12,
 		OrgId:  c.OrgId,
 	}
 	if err := bus.Dispatch(&cmd); err != nil {

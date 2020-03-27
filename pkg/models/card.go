@@ -1,5 +1,7 @@
 package models
 
+import "errors"
+
 //Card view card is base element in evening
 type Card struct {
 	Id      int64
@@ -20,6 +22,10 @@ type CardSlice []*Card
 func (s CardSlice) Len() int           { return len(s) }
 func (s CardSlice) Swap(i, j int)      { s[i], s[j] = s[j], s[i] }
 func (s CardSlice) Less(i, j int) bool { return s[i].Seq < s[j].Seq }
+
+var (
+	ErrPageNotFound = errors.New("Page not found")
+)
 
 type GetCardQuery struct {
 	CardId int64

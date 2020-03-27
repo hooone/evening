@@ -1,7 +1,7 @@
 import reqwest from 'reqwest'
 import { getLocale } from 'umi'
 import { EffectsCommandMap } from 'dva'
-import { fieldListStateProps, IField, IValueChange, IMove } from '@/interfaces';
+import { IField, IValueChange, IMove } from '@/interfaces';
 import { getLocaleText } from '@/util';
 
 interface showProps {
@@ -10,6 +10,10 @@ interface showProps {
 interface updateSeqProps {
     move: IMove,
     cardId: number,
+}
+export interface fieldListStateProps {
+    cardId: number,
+    fields: IField[],
 }
 
 export default {

@@ -1,6 +1,6 @@
 import React, { InputHTMLAttributes, ReactElement } from 'react';
 import { Row, Col, Form, Input, Select, Button } from 'antd';
-import { connect } from 'umi';
+import { connect, useIntl } from 'umi';
 import { DispatchProp } from 'react-redux';
 import { IModal, IViewAction } from '@/interfaces'
 import { getLocaleText, getInputValue } from '@/util'
@@ -13,6 +13,7 @@ interface CardInfoProps extends DispatchProp {
 }
 
 const CardInfo = (props: CardInfoProps) => {
+    const intl = useIntl();
     function onViewConfirm() {
         props.dispatch({
             type: 'cardInfoConfig/confirm',
@@ -31,6 +32,13 @@ const CardInfo = (props: CardInfoProps) => {
             name: name,
             value: value,
         })
+        if (name === "Width" || name === "Pos") {
+            props.dispatch({
+                type: 'draw/cardChanged',
+                name: name,
+                value: value,
+            })
+        }
     }
     return <Form layout="vertical" hideRequiredMark>
         <Row gutter={48}>
@@ -42,59 +50,77 @@ const CardInfo = (props: CardInfoProps) => {
                         value={props.cardInfoConfig.Name} />
                 </Form.Item>
                 <Form.Item
-                    label="标题"
+                    label={intl.formatMessage({
+                        id: 'title',
+                    })}
                 >
                     <Input onChange={(value) => { onChange("Text", value.target.value) }}
                         value={props.cardInfoConfig.Text} />
                 </Form.Item>
                 <Form.Item
-                    label="图表"
+                    label={intl.formatMessage({
+                        id: 'chart',
+                    })}
                 >
                     <Select onChange={(value) => { onChange("Style", value) }}
                         value={props.cardInfoConfig.Style} >
-                        <Option value="TABLE">表格</Option>
-                        <Option value="RECT">x-y图</Option>
-                        <Option value="POINT">散点图</Option>
-                        <Option value="DESC">详细描述</Option>
-                        <Option value="STAT">统计数据</Option>
+                        <Option value="TABLE"> label={intl.formatMessage({
+                            id: 'table',
+                        })}</Option>
+                        <Option value="RECT">{intl.formatMessage({
+                            id: 'rectchart',
+                        })}</Option>
+                        <Option value="POINT">{intl.formatMessage({
+                            id: 'pointchart',
+                        })}</Option>
+                        <Option value="DESC">{intl.formatMessage({
+                            id: 'descriptiontbl',
+                        })}</Option>
+                        <Option value="STAT">{intl.formatMessage({
+                            id: 'stat',
+                        })}</Option>
                     </Select>
                 </Form.Item>
                 <Form.Item
-                    label="宽度 (1-12)"
+                    label={intl.formatMessage({
+                        id: 'width',
+                    })}
                 >
                     <Select onChange={(value) => { onChange("Width", value) }}
                         value={props.cardInfoConfig.Width + ""} >
-                        <Option value="2">1</Option>
-                        <Option value="4">2</Option>
-                        <Option value="6">3</Option>
-                        <Option value="8">4</Option>
-                        <Option value="10">5</Option>
-                        <Option value="12">6</Option>
-                        <Option value="14">7</Option>
-                        <Option value="16">8</Option>
-                        <Option value="18">9</Option>
-                        <Option value="20">10</Option>
-                        <Option value="22">11</Option>
-                        <Option value="24">12</Option>
+                        <Option value="2">8.3%</Option>
+                        <Option value="4">16.7%</Option>
+                        <Option value="6">25%</Option>
+                        <Option value="8">33.3%</Option>
+                        <Option value="10">41.7%</Option>
+                        <Option value="12">50%</Option>
+                        <Option value="14">58.3%</Option>
+                        <Option value="16">66.7%</Option>
+                        <Option value="18">75%</Option>
+                        <Option value="20">83.3%</Option>
+                        <Option value="22">91.7%</Option>
+                        <Option value="24">100%</Option>
                     </Select>
                 </Form.Item>
                 <Form.Item
-                    label="位置 (基于左侧)"
+                    label={intl.formatMessage({
+                        id: 'pos4left',
+                    })}
                 >
                     <Select onChange={(value) => { onChange("Pos", value) }}
                         value={props.cardInfoConfig.Pos + ""} >
-                        <Option value="0">0</Option>
-                        <Option value="2">1</Option>
-                        <Option value="4">2</Option>
-                        <Option value="6">3</Option>
-                        <Option value="8">4</Option>
-                        <Option value="10">5</Option>
-                        <Option value="12">6</Option>
-                        <Option value="14">7</Option>
-                        <Option value="16">8</Option>
-                        <Option value="18">9</Option>
-                        <Option value="20">10</Option>
-                        <Option value="22">11</Option>
+                        <Option value="2">8.3%</Option>
+                        <Option value="4">16.7%</Option>
+                        <Option value="6">25%</Option>
+                        <Option value="8">33.3%</Option>
+                        <Option value="10">41.7%</Option>
+                        <Option value="12">50%</Option>
+                        <Option value="14">58.3%</Option>
+                        <Option value="16">66.7%</Option>
+                        <Option value="18">75%</Option>
+                        <Option value="20">83.3%</Option>
+                        <Option value="22">91.7%</Option>
+                        <Option value="24">100%</Option>
                     </Select>
                 </Form.Item>
             </Col>
@@ -103,13 +129,17 @@ const CardInfo = (props: CardInfoProps) => {
             <Row gutter={[16, 32]}>
                 <Col span={6} offset={8}>
                     <Button onClick={() => { onViewCancel(props.cardInfoConfig.Id) }}>
-                        撤销
-                                    </Button>
+                        {intl.formatMessage({
+                            id: 'cancel',
+                        })}
+                    </Button>
                 </Col>
                 <Col span={6} offset={1}>
                     <Button type="primary" onClick={() => { onViewConfirm() }}>
-                        保存
-                                    </Button>
+                        {intl.formatMessage({
+                            id: 'confirm',
+                        })}
+                    </Button>
                 </Col>
             </Row>
         )}

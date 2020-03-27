@@ -2,7 +2,7 @@ import { getLocale } from 'umi';
 import { EffectsCommandMap } from 'dva'
 import reqwest from 'reqwest'
 import { getLocaleText } from '@/util'
-import { ICard, drawStateProps } from '@/interfaces';
+import { ICard } from '@/interfaces';
 import { showRectChartConfigCommand } from './rectChartConfig'
 import { showPointChartConfigCommand } from './pointChartConfig'
 
@@ -11,6 +11,15 @@ export interface ILoadDrawCommand {
     cardId: number,
 }
 
+export interface drawStateProps {
+    cardId: number,
+    cardChanged: boolean,
+    visible: boolean,
+    subVisible: boolean,
+    styleVisible: boolean,
+    title: string,
+    subTitle: string,
+}
 export default {
     namespace: 'draw',
     state: {

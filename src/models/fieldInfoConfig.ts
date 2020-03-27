@@ -1,12 +1,16 @@
 import reqwest from 'reqwest'
 import { getLocale } from 'umi'
 import { EffectsCommandMap } from 'dva'
-import { fieldInfoStateProps, IField, IValueChange } from '@/interfaces';
+import { IField, IValueChange } from '@/interfaces';
 
 interface showProps {
     field: IField,
 }
 
+export interface fieldInfoStateProps extends IField {
+    visible: boolean,
+    dirty: boolean,
+}
 
 export default {
     namespace: 'fieldInfoConfig',

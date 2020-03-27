@@ -1,34 +1,42 @@
+import React, { InputHTMLAttributes, ReactElement } from 'react';
 import { Row, Col, Form, Input, Select, Button, Switch } from 'antd';
-import { connect } from 'umi';
+import { connect, useIntl } from 'umi';
+import { DispatchProp } from 'react-redux';
+import { parameterStateProps } from '@/models/parameterInfoConfig';
+import { IParameter } from '@/interfaces';
+import { IStore } from '@/store'
 const { Option } = Select;
 
-const ParameterInfo = ({ parameterInfoConfig, dispatch }) => {
-    console.log(parameterInfoConfig)
-    if (!parameterInfoConfig.visible) {
+interface ParameterInfoProps extends DispatchProp {
+    parameterInfoConfig: parameterStateProps,
+}
+const ParameterInfo = (props: ParameterInfoProps) => {
+    const intl = useIntl();
+    if (!props.parameterInfoConfig.visible) {
         return <span></span>
     }
-    function onConfirm(parameters, cardId) {
-        dispatch({
+    function onConfirm(parameters: IParameter[], cardId: number) {
+        props.dispatch({
             type: 'parameterInfoConfig/saveParameter',
             parameters: parameters,
             cardId: cardId,
         });
     }
     function onCancel() {
-        dispatch({ type: 'parameterInfoConfig/close' });
-        dispatch({ type: 'draw/subClose' });
+        props.dispatch({ type: 'parameterInfoConfig/close' });
+        props.dispatch({ type: 'draw/subClose' });
     }
-    function onChange(name, id, value) {
-        dispatch({
+    function onChange(name: string, id: number, value: any) {
+        props.dispatch({
             type: 'parameterInfoConfig/dirty',
             name: name,
             id: id,
             value: value,
         })
     }
-    let parameterItems = []
-    if (parameterInfoConfig && parameterInfoConfig.parameters) {
-        parameterInfoConfig.parameters.forEach(param => {
+    let parameterItems: ReactElement[] = []
+    if (props.parameterInfoConfig && props.parameterInfoConfig.parameters) {
+        props.parameterInfoConfig.parameters.forEach(param => {
             parameterItems.push(<Form.Item
                 key={"paramItem_" + param.Id}
                 label={[
@@ -36,13 +44,21 @@ const ParameterInfo = ({ parameterInfoConfig, dispatch }) => {
                     <Switch key={"paramV_" + param.Id}
                         onChange={(v) => onChange("IsVisible", param.Id, v)}
                         checked={param.IsVisible}
-                        checkedChildren={"可见"}
-                        unCheckedChildren={"隐藏"} style={{ marginLeft: "8px" }} />,
+                        checkedChildren={intl.formatMessage({
+                            id: 'visible',
+                        })}
+                        unCheckedChildren={intl.formatMessage({
+                            id: 'hidden',
+                        })} style={{ marginLeft: "8px" }} />,
                     <Switch key={"paramE_" + param.Id}
                         onChange={(v) => onChange("IsEditable", param.Id, v)}
                         checked={param.IsEditable}
-                        checkedChildren={"输入"}
-                        unCheckedChildren={"只读"}
+                        checkedChildren={intl.formatMessage({
+                            id: 'editable',
+                        })}
+                        unCheckedChildren={intl.formatMessage({
+                            id: 'readonly',
+                        })}
                         style={{ marginLeft: "8px" }} />]}
             >
                 <Input key={"default_" + param.Id}
@@ -58,24 +74,31 @@ const ParameterInfo = ({ parameterInfoConfig, dispatch }) => {
                 {parameterItems}
             </Col>
         </Row>
-        {(parameterInfoConfig) && (parameterInfoConfig.dirty) && (
+        {(props.parameterInfoConfig) && (props.parameterInfoConfig.dirty) && (
             <Row gutter={[16, 32]}>
                 <Col span={6} offset={8}>
                     <Button onClick={() => { onCancel() }}>
-                        取消
-        </Button>
+                        {intl.formatMessage({
+                            id: 'cancel',
+                        })}
+                    </Button>
                 </Col>
                 <Col span={6} offset={1}>
                     <Button type="primary" onClick={() => {
-                        onConfirm(parameterInfoConfig.parameters, parameterInfoConfig.cardId)
+                        onConfirm(props.parameterInfoConfig.parameters, props.parameterInfoConfig.cardId)
                     }}>
-                        保存
-        </Button>
+                        {intl.formatMessage({
+                            id: 'confirm',
+                        })}
+                    </Button>
                 </Col>
             </Row>
         )}
     </Form>;
 };
-export default connect(({ parameterInfoConfig }) => ({
-    parameterInfoConfig,
-}))(ParameterInfo);
+
+export default connect((state: IStore, props: any) => {
+    return {
+        parameterInfoConfig: state.parameterInfoConfig
+    }
+})(ParameterInfo);

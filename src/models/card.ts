@@ -6,6 +6,10 @@ import { IStore } from '@/store'
 
 export interface cardStateProps extends ICard {
 }
+export interface CardContentProps {
+    onAction: Function,
+    card: ICard,
+}
 
 interface loadProps {
     cardId: number,

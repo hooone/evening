@@ -92,6 +92,8 @@ export default {
                 lang: getLocale(),
             });
             handler.history.listen(location => {
+                console.log("history listem")
+                console.log(handler.history.location.pathname)
                 handler.dispatch({
                     type: 'page/loadPage',
                     Name: handler.history.location.pathname,

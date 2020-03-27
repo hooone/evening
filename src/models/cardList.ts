@@ -1,11 +1,11 @@
 import reqwest from 'reqwest'
 import { getLocale } from 'umi'
 import { EffectsCommandMap } from 'dva'
-import { ICard, IStore, IMove } from '@/interfaces'
+import { ICard, IMove } from '@/interfaces'
 import { getLocaleText } from '@/util';
+import { IStore } from '@/store';
 
 interface actionProps {
-    cardId: number,
     move: IMove,
     cards: ICard[],
 }

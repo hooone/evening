@@ -4,10 +4,8 @@ import { connect, useIntl, getLocale } from 'umi';
 import { getLocaleText } from '@/util'
 import { Chart, Geom, Axis, Tooltip, Legend, Coord } from 'bizcharts';
 import { ICard, IStyle } from '@/interfaces';
+import { CardContentProps } from '@/models/card';
 
-interface cardProps {
-    card: ICard,
-}
 interface ISeriesData {
     xAxis: any,
     y1Axis: number,
@@ -21,7 +19,7 @@ interface setting {
     y2Axis?: IStyle,
     y2Color?: string,
 }
-const RectChart = (props: cardProps) => {
+const RectChart = (props: CardContentProps) => {
     // convert styles to setting
     let setting: setting = {
     }

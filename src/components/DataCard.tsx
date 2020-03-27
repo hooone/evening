@@ -181,6 +181,7 @@ const DataCard = (props: DataCardProps) => {
                 ]}>
                 <RectChart
                     card={props.card}
+                    onAction={handleAction}
                 />
             </Card>
         </div >)
@@ -205,6 +206,7 @@ const DataCard = (props: DataCardProps) => {
                 ]}>
                 <PointChart
                     card={props.card}
+                    onAction={handleAction}
                 />
             </Card>
         </div >)
@@ -229,6 +231,7 @@ const DataCard = (props: DataCardProps) => {
                 ]}>
                 <DescriptionsCard
                     card={props.card}
+                    onAction={handleAction}
                 />
             </Card>
         </div >)
@@ -238,7 +241,9 @@ const DataCard = (props: DataCardProps) => {
             <Card key={"tablecard_" + props.card.Id} className="tableCard">
                 <Row>
                     <Col span={23}>
-                        <StatisticCard card={props.card} />
+                        <StatisticCard
+                            card={props.card}
+                            onAction={handleAction} />
                     </Col>
                     <Col span={1}>
                         <Button key={"card_" + props.card.Id + "_setting"}

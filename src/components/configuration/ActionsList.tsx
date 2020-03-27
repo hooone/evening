@@ -1,24 +1,33 @@
+import React, { InputHTMLAttributes, ReactElement } from 'react';
 import { List, Divider, Button, Modal } from 'antd';
 import { connect, useIntl } from 'umi';
+import { DispatchProp } from 'react-redux';
 import { EyeOutlined, EyeInvisibleOutlined, TagOutlined, CodeOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
+import { actionListStateProps } from '@/models/actionList'
+import { IViewAction } from '@/interfaces';
+import { findAttribute } from '@/util';
+import { IStore } from '@/store'
 
 const { confirm } = Modal;
 
-const ActionsList = ({ actionList, dispatch }) => {
+interface ActionListProps extends DispatchProp {
+    actionList: actionListStateProps,
+}
+const ActionsList = (props: ActionListProps) => {
     const intl = useIntl();
     function createAction() {
-        dispatch({
+        props.dispatch({
             type: 'actionInfoConfig/show',
             action: {
                 Id: 0,
-                CardId: actionList.cardId,
+                CardId: props.actionList.cardId,
                 Name: "",
                 Type: "UPDATE",
                 Seq: 0,
                 DoubleCheck: false,
             },
         });
-        dispatch({
+        props.dispatch({
             type: 'draw/subOpen',
             title: intl.formatMessage(
                 {
@@ -27,29 +36,28 @@ const ActionsList = ({ actionList, dispatch }) => {
             ),
         });
     }
-    function updateAction(action) {
-        console.log(action)
-        dispatch({
+    function updateAction(action: IViewAction) {
+        props.dispatch({
             type: 'actionInfoConfig/show',
             action: action,
         });
-        dispatch({
+        props.dispatch({
             type: 'draw/subOpen',
             title: action.Text,
         });
     }
-    function updateParameter(action) {
-        dispatch({
+    function updateParameter(action: IViewAction) {
+        props.dispatch({
             type: 'parameterInfoConfig/show',
             parameters: action.Parameters,
-            cardId: actionList.cardId,
+            cardId: props.actionList.cardId,
         });
-        dispatch({
+        props.dispatch({
             type: 'draw/subOpen',
             title: action.Text,
         });
     }
-    function deleteAction(action) {
+    function deleteAction(action: IViewAction) {
         confirm({
             title:
                 (<span><span>
@@ -71,7 +79,7 @@ const ActionsList = ({ actionList, dispatch }) => {
             ,
             icon: <ExclamationCircleOutlined />,
             onOk() {
-                dispatch({
+                props.dispatch({
                     type: 'actionList/deleteAction',
                     action: action,
                 });
@@ -83,87 +91,72 @@ const ActionsList = ({ actionList, dispatch }) => {
 
     }
 
-
-    function findAttribute(ele, attr) {
-        if (!ele)
-            return '';
-        while (!ele.getAttribute(attr)) {
-            if (ele.id === 'root')
-                return '';
-            else {
-                ele = ele.parentElement;
-            }
-            if (!ele)
-                return '';
-        }
-        return ele.getAttribute(attr);
-    }
-    function onDragStart(e) {
-        let real = e.target;
+    function onDragStart(e: React.DragEvent) {
+        let real = e.target as HTMLElement;
         if (real.tagName === "LI" && real.classList.contains("ant-list-item")) {
             e.dataTransfer.setData("id", findAttribute(real, "data-id"));
             e.dataTransfer.setData("type", findAttribute(real, "data-type"));
         }
     }
-    function getRealDOM(s) {
+    function getRealDOM(s: HTMLElement) {
         let real = s;
         if (real.tagName === "path") {
-            real = real.parentElement
+            real = real.parentElement as HTMLElement
         }
         if (real.tagName === "svg") {
-            real = real.parentElement
+            real = real.parentElement as HTMLElement
         }
         if (real.tagName === "EM") {
-            real = real.parentElement
+            real = real.parentElement as HTMLElement
         }
         if (real.tagName === "A") {
-            real = real.parentElement
+            real = real.parentElement as HTMLElement
         }
         if (real.tagName === "I") {
-            real = real.parentElement
+            real = real.parentElement as HTMLElement
         }
         if (real.tagName === "LI" && !real.classList.contains("ant-list-item")) {
-            real = real.parentElement
+            real = real.parentElement as HTMLElement
         }
         if (real.tagName === "UL") {
-            real = real.parentElement
+            real = real.parentElement as HTMLElement
         }
         if (real.tagName === "SPAN") {
-            real = real.parentElement
+            real = real.parentElement as HTMLElement
         }
         if (real.tagName === "SPAN") {
-            real = real.parentElement
+            real = real.parentElement as HTMLElement
         }
         if (real.tagName === "SPAN") {
-            real = real.parentElement
+            real = real.parentElement as HTMLElement
         }
         if (real.tagName === "H4") {
-            real = real.parentElement
+            real = real.parentElement as HTMLElement
         }
         if (real.tagName === "DIV") {
-            real = real.parentElement
+            real = real.parentElement as HTMLElement
         }
         if (real.tagName === "DIV") {
-            real = real.parentElement
+            real = real.parentElement as HTMLElement
         }
         if (real.tagName === "DIV") {
-            real = real.parentElement
+            real = real.parentElement as HTMLElement
         }
         return real
     }
-    function onDrop(e) {
+    function onDrop(e: React.DragEvent) {
         e.preventDefault()
         let formdata = {
             Source: 0,
             Target: 0,
             Position: 0,
         }
-        let real = getRealDOM(e.target)
+        let real = getRealDOM(e.target as HTMLElement)
         real.classList.add("dragEnterList")
         if (real.tagName === "LI" && real.classList.contains("ant-list-item")) {
             real.classList.remove("dragEnterList")
-            formdata.Source = e.dataTransfer.getData("id");
-            formdata.Target = findAttribute(real, "data-id")
+            formdata.Source = parseInt(e.dataTransfer.getData("id"));
+            formdata.Target = parseInt(findAttribute(real, "data-id"));
             let sourceType = e.dataTransfer.getData("type");
             if (e.clientY - 71 - real.offsetTop < real.clientHeight / 2) {
                 formdata.Position = 1;
@@ -171,16 +164,16 @@ const ActionsList = ({ actionList, dispatch }) => {
             else {
                 formdata.Position = 2;
             }
-            dispatch({
+            props.dispatch({
                 type: 'actionList/updateSeq',
                 move: formdata,
-                cardId: actionList.cardId
+                cardId: props.actionList.cardId
             });
         }
 
     }
-    function onDragOver(e) {
-        let real = getRealDOM(e.target);
+    function onDragOver(e: React.DragEvent) {
+        let real = getRealDOM(e.target as HTMLElement);
         if (real.tagName === "LI" && real.classList.contains("drawer-list")) {
             if (e.clientY - 71 - real.offsetTop < real.clientHeight / 2) {
                 real.classList.add("dragTop")
@@ -195,15 +188,15 @@ const ActionsList = ({ actionList, dispatch }) => {
         }
         e.preventDefault()
     }
-    function onDragEnter(e) {
-        let real = getRealDOM(e.target);
+    function onDragEnter(e: React.DragEvent) {
+        let real = getRealDOM(e.target as HTMLElement);
         if (real.tagName === "LI" && real.classList.contains("drawer-list")) {
             real.classList.add("dragEnterList")
         }
         e.preventDefault()
     }
-    function onDragLeave(e) {
-        let real = e.target
+    function onDragLeave(e: React.DragEvent) {
+        let real = e.target as HTMLElement;
         if (real.tagName === "LI" && real.classList.contains("drawer-list")) {
             real.classList.remove("dragEnterList")
         }
@@ -211,7 +204,7 @@ const ActionsList = ({ actionList, dispatch }) => {
     }
 
     return <List
-        dataSource={actionList.actions}
+        dataSource={props.actionList.actions}
         footer={<Button type="dashed" block onClick={() => { createAction() }}>新增</Button>}
         renderItem={item => (
             <List.Item
@@ -223,17 +216,23 @@ const ActionsList = ({ actionList, dispatch }) => {
                 onDragLeave={(event) => { onDragLeave(event) }}
                 onDragOver={(event) => { onDragOver(event) }}
                 allowdrop="true"
-                key={item.id} data-id={item.Id} data-type={"action"}
+                key={"actList_" + item.Id} data-id={item.Id} data-type={"action"}
                 actions={[
                     <Button type="link" onClick={() => { updateAction(item) }} key={`am-${item.Id}`}>
-                        修改
-            </Button>,
+                        {intl.formatMessage({
+                            id: 'update',
+                        })}
+                    </Button>,
                     <Button type="link" onClick={() => { updateParameter(item) }} key={`ap-${item.Id}`}>
-                        参数
-                                        </Button>,
+                        {intl.formatMessage({
+                            id: 'actionparam',
+                        })}
+                    </Button>,
                     <Button type="link" danger onClick={() => { deleteAction(item) }} key={`ad-${item.Id}`}>
-                        删除
-            </Button>,
+                        {intl.formatMessage({
+                            id: 'delete',
+                        })}
+                    </Button>,
                 ]}
             >
                 <List.Item.Meta
@@ -259,6 +258,8 @@ const ActionsList = ({ actionList, dispatch }) => {
         )}
     />
 };
-export default connect(({ actionList }) => ({
-    actionList,
-}))(ActionsList);
+export default connect((state: IStore) => {
+    return {
+        actionList: state.actionList,
+    }
+})(ActionsList);

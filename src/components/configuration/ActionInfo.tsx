@@ -1,6 +1,6 @@
 import React, { InputHTMLAttributes, ReactElement } from 'react';
 import { Row, Col, Form, Input, Select, Button } from 'antd';
-import { connect, Dispatch } from 'umi';
+import { connect, useIntl } from 'umi';
 import { DispatchProp } from 'react-redux';
 import { IModal, IViewAction } from '@/interfaces'
 import { getLocaleText, getInputValue } from '@/util'
@@ -13,6 +13,7 @@ interface ActionInfoProps extends DispatchProp {
 }
 
 const ActionInfo = (props: ActionInfoProps) => {
+    const intl = useIntl();
     if (!props.actionInfoConfig.visible) {
         return <span></span>
     }
@@ -41,31 +42,59 @@ const ActionInfo = (props: ActionInfoProps) => {
                     <Input onChange={(value) => { onChange("Name", value.target.value) }}
                         value={props.actionInfoConfig.Name} />
                 </Form.Item>
-                <Form.Item label="标题">
+                <Form.Item label={intl.formatMessage({
+                    id: 'title',
+                })}>
                     <Input onChange={(value) => { onChange("Text", value.target.value) }}
                         value={props.actionInfoConfig.Text} />
                 </Form.Item>
-                <Form.Item label="操作类型">
+                <Form.Item label={intl.formatMessage({
+                    id: 'actiontype',
+                })}>
                     <Select
                         onChange={(value) => { onChange("Type", value) }}
                         value={props.actionInfoConfig.Type} >
-                        <Option value="CREATE">添加</Option>
-                        <Option value="UPDATE">修改</Option>
-                        <Option value="DELETE">删除</Option>
-                        <Option value="IMPORT">导入</Option>
-                        <Option value="EXPORT">导出</Option>
-                        <Option value="SELECTIMPORT">选中行导入</Option>
-                        <Option value="SELECTEXPORT">选中行导出</Option>
-                        <Option value="MULTIUPDATE">批量修改</Option>
-                        <Option value="MULTIEXPORT">批量导出</Option>
+                        <Option value="CREATE">{intl.formatMessage({
+                            id: 'create',
+                        })}</Option>
+                        <Option value="UPDATE">{intl.formatMessage({
+                            id: 'update',
+                        })}</Option>
+                        <Option value="DELETE">{intl.formatMessage({
+                            id: 'delete',
+                        })}</Option>
+                        <Option value="IMPORT">{intl.formatMessage({
+                            id: 'import',
+                        })}</Option>
+                        <Option value="EXPORT">{intl.formatMessage({
+                            id: 'export',
+                        })}</Option>
+                        <Option value="SELECTIMPORT">{intl.formatMessage({
+                            id: 'importselected',
+                        })}</Option>
+                        <Option value="SELECTEXPORT">{intl.formatMessage({
+                            id: 'exportselected',
+                        })}</Option>
+                        <Option value="MULTIUPDATE">{intl.formatMessage({
+                            id: 'batchupdate',
+                        })}</Option>
+                        <Option value="MULTIEXPORT">{intl.formatMessage({
+                            id: 'batchexport',
+                        })}</Option>
                     </Select>
                 </Form.Item>
-                <Form.Item label="二次确认" >
+                <Form.Item label={intl.formatMessage({
+                    id: 'doublecheck',
+                })} >
                     <Select
                         onChange={(value) => { onChange("DoubleCheck", value === "true") }}
                         value={props.actionInfoConfig.DoubleCheck ? "true" : "false"} >
-                        <Option value="true">是</Option>
-                        <Option value="false">否</Option>
+                        <Option value="true">{intl.formatMessage({
+                            id: 'yes',
+                        })}</Option>
+                        <Option value="false">{intl.formatMessage({
+                            id: 'no',
+                        })}</Option>
                     </Select>
                 </Form.Item>
             </Col>
@@ -75,15 +104,19 @@ const ActionInfo = (props: ActionInfoProps) => {
                 <Row gutter={[16, 32]}>
                     <Col span={6} offset={8}>
                         <Button onClick={() => { onCancel() }}>
-                            取消
-        </Button>
+                            {intl.formatMessage({
+                                id: 'cancel',
+                            })}
+                        </Button>
                     </Col>
                     <Col span={6} offset={1}>
                         <Button type="primary" onClick={() => {
                             onConfirm(props.actionInfoConfig)
                         }}>
-                            保存
-        </Button>
+                            {intl.formatMessage({
+                                id: 'confirm',
+                            })}
+                        </Button>
                     </Col>
                 </Row>
             )

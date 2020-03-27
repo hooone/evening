@@ -3,11 +3,9 @@ import { Statistic, Empty, Row, Col } from 'antd';
 import { getLocaleText } from '@/util'
 import { ICard, IStyle } from '@/interfaces';
 import cardInfoConfig from '@/models/cardInfoConfig';
+import { CardContentProps } from '@/models/card';
 
-interface cardProps {
-    card: ICard,
-}
-const StatisticCard = (props: cardProps) => {
+const StatisticCard = (props: CardContentProps) => {
     if (!props.card.data || props.card.data.length < 1) {
         return (<Empty />)
     }

@@ -96,10 +96,14 @@ const PageContent = (props: PageProps) => {
             contents.push(<Row key={"row_" + row.Id} >{cols}</Row>)
         }
     )
-    return <Content style={{ margin: '0 16px', paddingBottom: '100px' }}
+    return ((props.page.Name) ? (<Content style={{ margin: '0 16px', paddingBottom: '100px' }}
         data-contextmenu="content" data-pageid={props.page.Id} data-pagename={props.page.Name} >
         {contents}
-    </Content>
+    </Content>) : (<Content style={{ margin: '0 16px', paddingBottom: '100px' }}
+        data-contextmenu="content"  >
+        404
+    </Content>)
+    )
 };
 
 export default connect((state: IStore) => {

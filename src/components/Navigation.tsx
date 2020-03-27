@@ -227,7 +227,21 @@ const Navigation = (props: NavProps) => {
                             SelectedKey = ["page_" + folder.Pages[0].Id]
                         }
                     }
-                    trees.push(<Menu.Item
+                    trees.push((folder.Pages[0].Name === "home") ? (<Menu.Item
+                        draggable="false"
+                        key={"page_" + folder.Pages[0].Id} className="nav-tree"
+                        data-contextmenu="treepage"
+                        data-treeid={folder.Id}
+                        data-pageid={folder.Pages[0].Id}
+                        data-text={folder.Pages[0].Text}
+                        data-name={folder.Pages[0].Name}
+                    >
+                        <Link to={"/" + folder.Pages[0].Name + "/"}>
+                            <FileOutlined /><span >
+                                {getLocaleText(folder.Pages[0].Locale)}
+                            </span>
+                        </Link>
+                    </Menu.Item>) : (<Menu.Item
                         draggable="true"
                         onDragStart={(e) => { onDragStart(e) }}
                         onDragEnter={(e) => { onDragEnter(e) }}
@@ -246,6 +260,7 @@ const Navigation = (props: NavProps) => {
                             </span>
                         </Link>
                     </Menu.Item>)
+                    )
                 }
             }
             else {

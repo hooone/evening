@@ -1,44 +1,40 @@
 import React, { Component } from 'react';
 import { connect, getLocale, useIntl } from 'umi';
-import { Modal } from 'antd';
-const { confirm } = Modal;
+import { Modal, message } from 'antd';
+import { DispatchProp } from 'react-redux';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
+import { contextMenuStateProps } from '@/models/contextMenu';
+import { getLocaleText } from '@/util';
+import { IStore } from '@/store'
+import { ILocale } from '@/interfaces';
+const { confirm } = Modal;
 
-const RightClickContextMenu = ({ contextMenu, dispatch }) => {
-    function getLocaleText(Name, Locale) {
-        let lang = getLocale();
-        if (Locale[lang] === undefined || Locale[lang] === "") {
-            if (Locale["default"] !== undefined) {
-                return Locale["default"]
-            }
-            return Name;
-        }
-        else {
-            return Locale[lang];
-        }
-    }
-    if (contextMenu.visible) {
+
+interface RightClickContextMenuProps extends DispatchProp {
+    contextMenu: contextMenuStateProps,
+}
+const RightClickContextMenu = (props: RightClickContextMenuProps) => {
+    if (props.contextMenu.visible) {
         const intl = useIntl();
-        return (<div id="contextmenu" className="skin" style={{ left: contextMenu.left, top: contextMenu.top }}>
+        return (<div id="contextmenu" className="skin"
+            style={{ left: props.contextMenu.left, top: props.contextMenu.top }}>
             <ul className="dropdown-menu">
-                {(contextMenu.menu === "addtree") &&
+                {(props.contextMenu.menu === "addtree") &&
                     <li onClick={() => {
-                        dispatch({
+                        props.dispatch({
                             type: 'contextMenu/createfolder',
-                            record: contextMenu.record,
+                            record: props.contextMenu.record,
                         })
                     }}>
-                        {intl.formatMessage(
-                            {
-                                id: 'createfolder',
-                            }
-                        )}
+                        {intl.formatMessage({
+                            id: 'createfolder',
+                        })}
                     </li>}
-                {(contextMenu.menu === "addtree") &&
+                {(props.contextMenu.menu === "addtree") &&
                     <li onClick={() => {
-                        dispatch({
+                        props.dispatch({
                             type: 'contextMenu/createpage',
-                            record: contextMenu.record,
+                            record: props.contextMenu.record,
                         })
                     }}>
                         {intl.formatMessage(
@@ -47,11 +43,11 @@ const RightClickContextMenu = ({ contextMenu, dispatch }) => {
                             }
                         )}
                     </li>}
-                {(contextMenu.menu === "treeview") &&
+                {(props.contextMenu.menu === "treeview") &&
                     <li onClick={() => {
-                        dispatch({
+                        props.dispatch({
                             type: 'contextMenu/createNodePage',
-                            record: contextMenu.record,
+                            record: props.contextMenu.record,
                         })
                     }}>
                         {intl.formatMessage(
@@ -60,11 +56,11 @@ const RightClickContextMenu = ({ contextMenu, dispatch }) => {
                             }
                         )}
                     </li>}
-                {(contextMenu.menu === "treeview") &&
+                {(props.contextMenu.menu === "treeview") &&
                     <li onClick={() => {
-                        dispatch({
+                        props.dispatch({
                             type: 'contextMenu/updateFolder',
-                            record: contextMenu.record,
+                            record: props.contextMenu.record,
                         })
                     }}>
                         {intl.formatMessage(
@@ -73,11 +69,12 @@ const RightClickContextMenu = ({ contextMenu, dispatch }) => {
                             }
                         )}
                     </li>}
-                {(contextMenu.menu === "treeview") &&
+                {(props.contextMenu.menu === "treeview") &&
                     <li onClick={() => {
-                        let locale = {
+                        let locale: ILocale = {
                             "zh-CN": '删除文件夹',
-                            "en-US": "delete folder"
+                            "en-US": "delete folder",
+                            Default: "delete folder",
                         }
                         confirm({
                             title: (<span>
@@ -86,14 +83,14 @@ const RightClickContextMenu = ({ contextMenu, dispatch }) => {
                                         id: 'confirm',
                                     }
                                 )}</span>
-                                <span>{getLocaleText("Delete", locale) + "?"} </span>
+                                <span>{getLocaleText(locale) + "?"} </span>
                             </span>)
                             ,
                             icon: <ExclamationCircleOutlined />,
                             onOk() {
-                                dispatch({
+                                props.dispatch({
                                     type: 'contextMenu/deleteFolder',
-                                    record: contextMenu.record,
+                                    record: props.contextMenu.record,
                                 })
                             },
                             onCancel() {
@@ -107,11 +104,11 @@ const RightClickContextMenu = ({ contextMenu, dispatch }) => {
                             }
                         )}
                     </li>}
-                {(contextMenu.menu === "treepage") &&
+                {(props.contextMenu.menu === "treepage") &&
                     <li onClick={() => {
-                        dispatch({
+                        props.dispatch({
                             type: 'contextMenu/updatePage',
-                            record: contextMenu.record,
+                            record: props.contextMenu.record,
                         })
                     }}>
                         {intl.formatMessage(
@@ -120,11 +117,16 @@ const RightClickContextMenu = ({ contextMenu, dispatch }) => {
                             }
                         )}
                     </li>}
-                {(contextMenu.menu === "treepage") &&
+                {(props.contextMenu.menu === "treepage") &&
                     <li onClick={() => {
-                        let locale = {
+                        if (props.contextMenu.record.name === "home") {
+                            message.error('不允许删除主页');
+                            return;
+                        }
+                        let locale: ILocale = {
                             "zh-CN": '删除页面',
-                            "en-US": "delete page"
+                            "en-US": "delete page",
+                            Default: "delete page",
                         }
                         confirm({
                             title: (<span>
@@ -133,14 +135,14 @@ const RightClickContextMenu = ({ contextMenu, dispatch }) => {
                                         id: 'confirm',
                                     }
                                 )}</span>
-                                <span>{getLocaleText("Delete", locale) + "?"} </span>
+                                <span>{getLocaleText(locale) + "?"} </span>
                             </span>)
                             ,
                             icon: <ExclamationCircleOutlined />,
                             onOk() {
-                                dispatch({
+                                props.dispatch({
                                     type: 'contextMenu/deletePage',
-                                    record: contextMenu.record,
+                                    record: props.contextMenu.record,
                                 })
                             },
                             onCancel() {
@@ -154,11 +156,11 @@ const RightClickContextMenu = ({ contextMenu, dispatch }) => {
                             }
                         )}
                     </li>}
-                {(contextMenu.menu === "nodepage") &&
+                {(props.contextMenu.menu === "nodepage") &&
                     <li onClick={() => {
-                        dispatch({
+                        props.dispatch({
                             type: 'contextMenu/updatePage',
-                            record: contextMenu.record,
+                            record: props.contextMenu.record,
                         })
                     }}>
                         {intl.formatMessage(
@@ -167,11 +169,21 @@ const RightClickContextMenu = ({ contextMenu, dispatch }) => {
                             }
                         )}
                     </li>}
-                {(contextMenu.menu === "nodepage") &&
+                {(props.contextMenu.menu === "nodepage") &&
                     <li onClick={() => {
-                        let locale = {
+                        let locale: ILocale = {
                             "zh-CN": '删除页面',
-                            "en-US": "delete page"
+                            "en-US": "delete page",
+                            "Default": "delete page",
+                        }
+                        let deleteHome: ILocale = {
+                            "zh-CN": '不允许删除主页',
+                            "en-US": "can not delete home",
+                            "Default": "can not delete home",
+                        }
+                        if (props.contextMenu.record.name === "home") {
+                            message.error(getLocaleText(deleteHome));
+                            return;
                         }
                         confirm({
                             title: (<span>
@@ -180,14 +192,14 @@ const RightClickContextMenu = ({ contextMenu, dispatch }) => {
                                         id: 'confirm',
                                     }
                                 )}</span>
-                                <span>{getLocaleText("Delete", locale) + "?"} </span>
+                                <span>{getLocaleText(locale) + "?"} </span>
                             </span>)
                             ,
                             icon: <ExclamationCircleOutlined />,
                             onOk() {
-                                dispatch({
+                                props.dispatch({
                                     type: 'contextMenu/deletePage',
-                                    record: contextMenu.record,
+                                    record: props.contextMenu.record,
                                 })
                             },
                             onCancel() {
@@ -201,11 +213,12 @@ const RightClickContextMenu = ({ contextMenu, dispatch }) => {
                             }
                         )}
                     </li>}
-                {(contextMenu.menu === "card") &&
+                {(props.contextMenu.menu === "card") &&
                     <li onClick={() => {
-                        let locale = {
+                        let locale: ILocale = {
                             "zh-CN": '删除卡片',
-                            "en-US": "delete card"
+                            "en-US": "delete card",
+                            "Default": "delete card",
                         }
                         confirm({
                             title: (<span>
@@ -214,14 +227,14 @@ const RightClickContextMenu = ({ contextMenu, dispatch }) => {
                                         id: 'confirm',
                                     }
                                 )}</span>
-                                <span>{getLocaleText("Delete", locale) + "?"} </span>
+                                <span>{getLocaleText(locale) + "?"} </span>
                             </span>)
                             ,
                             icon: <ExclamationCircleOutlined />,
                             onOk() {
-                                dispatch({
+                                props.dispatch({
                                     type: 'contextMenu/deleteCard',
-                                    record: contextMenu.record,
+                                    record: props.contextMenu.record,
                                 })
                             },
                             onCancel() {
@@ -235,11 +248,11 @@ const RightClickContextMenu = ({ contextMenu, dispatch }) => {
                             }
                         )}
                     </li>}
-                {(contextMenu.menu === "content") &&
+                {(props.contextMenu.menu === "content") &&
                     <li onClick={() => {
-                        dispatch({
+                        props.dispatch({
                             type: 'contextMenu/createCard',
-                            record: contextMenu.record,
+                            record: props.contextMenu.record,
                         })
                     }}>
                         {intl.formatMessage(
@@ -257,6 +270,8 @@ const RightClickContextMenu = ({ contextMenu, dispatch }) => {
     }
 }
 
-export default connect(({ contextMenu }) => ({
-    contextMenu,
-}))(RightClickContextMenu);
+export default connect((state: IStore, props: any) => {
+    return {
+        contextMenu: state.contextMenu
+    }
+})(RightClickContextMenu);

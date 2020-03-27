@@ -1,8 +1,13 @@
 import reqwest from 'reqwest'
 import { getLocale } from 'umi'
 import { EffectsCommandMap } from 'dva'
-import { actionListStateProps, IViewAction, IMove } from '@/interfaces'
+import { IViewAction, IMove } from '@/interfaces'
 
+
+export interface actionListStateProps {
+    cardId: number,
+    actions: IViewAction[],
+}
 
 interface actionProps {
     action: IViewAction,

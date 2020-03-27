@@ -2,8 +2,15 @@ import { getLocale } from 'umi'
 import reqwest from 'reqwest'
 import { EffectsCommandMap } from 'dva'
 
-import { parameterStateProps, IValueChange, IParameter, IViewAction } from '@/interfaces'
+import { IValueChange, IParameter, IViewAction } from '@/interfaces'
 import { getLocaleText } from '@/util';
+
+export interface parameterStateProps {
+    cardId: number,
+    visible: boolean,
+    dirty: boolean,
+    parameters: IParameter[],
+}
 
 export default {
     namespace: 'parameterInfoConfig',

@@ -116,6 +116,20 @@ func DeleteFolder(c *models.ReqContext, form dtos.DeleteFolderForm) Response {
 
 //CreateTreePage 添加一级页面
 func CreateTreePage(c *models.ReqContext, form dtos.CreateTreePageForm, lang dtos.LocaleForm) Response {
+	//重名判断
+	oldPquery := models.GetPageByNameQuery{
+		PageName: form.Name,
+		OrgId:    c.OrgId,
+	}
+	errP := bus.Dispatch(&oldPquery)
+	if errP != models.ErrPageNotFound {
+		resultN := new(CommonResult)
+		resultN.Data = 0
+		resultN.Success = false
+		resultN.Message = "Page name conflict"
+		return JSON(200, resultN)
+	}
+
 	query := models.GetFolderQuery{OrgId: c.OrgId}
 	if err := bus.Dispatch(&query); err != nil {
 		return Error(500, "Failed to get folder", err)
@@ -158,6 +172,19 @@ func CreateTreePage(c *models.ReqContext, form dtos.CreateTreePageForm, lang dto
 
 //CreateNodePage 添加子页面
 func CreateNodePage(c *models.ReqContext, form dtos.CreateNodePageForm, lang dtos.LocaleForm) Response {
+	//重名判断
+	oldPquery := models.GetPageByNameQuery{
+		PageName: form.Name,
+		OrgId:    c.OrgId,
+	}
+	if err := bus.Dispatch(&oldPquery); err == nil {
+		resultN := new(CommonResult)
+		resultN.Data = 0
+		resultN.Success = false
+		resultN.Message = "Page name conflict"
+		return JSON(200, resultN)
+	}
+
 	query := models.GetPagesQuery{FolderId: form.FolderId, OrgId: c.OrgId}
 	if err := bus.Dispatch(&query); err != nil {
 		return Error(500, "Failed to get pages", err)

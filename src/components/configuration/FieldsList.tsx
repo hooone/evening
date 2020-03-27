@@ -1,17 +1,26 @@
+import React, { InputHTMLAttributes, ReactElement } from 'react';
 import { List, Divider, Button, Modal } from 'antd';
 import { connect, useIntl } from 'umi';
+import { DispatchProp } from 'react-redux';
 import { EyeOutlined, EyeInvisibleOutlined, TagOutlined, CodeOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
+import { findAttribute } from '@/util';
+import { IStore } from '@/store'
+import { IField } from '@/interfaces'
+import { fieldListStateProps } from '@/models/fieldList';
 
 const { confirm } = Modal;
 
-const FieldsList = ({ fieldList, dispatch }) => {
+interface FieldsListProps extends DispatchProp {
+    fieldList: fieldListStateProps,
+}
+const FieldsList = (props: FieldsListProps) => {
     const intl = useIntl();
     function createField() {
-        dispatch({
+        props.dispatch({
             type: 'fieldInfoConfig/show',
             field: {
                 Id: 0,
-                CardId: fieldList.cardId,
+                CardId: props.fieldList.cardId,
                 Name: "",
                 Text: "",
                 Type: "int",
@@ -21,7 +30,7 @@ const FieldsList = ({ fieldList, dispatch }) => {
                 Default: "",
             },
         });
-        dispatch({
+        props.dispatch({
             type: 'draw/subOpen',
             title: intl.formatMessage(
                 {
@@ -30,18 +39,18 @@ const FieldsList = ({ fieldList, dispatch }) => {
             ),
         });
     }
-    function updateField(field) {
+    function updateField(field: IField) {
         console.log(field)
-        dispatch({
+        props.dispatch({
             type: 'fieldInfoConfig/show',
             field: field,
         });
-        dispatch({
+        props.dispatch({
             type: 'draw/subOpen',
             title: field.Text,
         });
     }
-    function deleteField(field) {
+    function deleteField(field: IField) {
         confirm({
             title:
                 (<span><span>
@@ -63,7 +72,7 @@ const FieldsList = ({ fieldList, dispatch }) => {
             ,
             icon: <ExclamationCircleOutlined />,
             onOk() {
-                dispatch({
+                props.dispatch({
                     type: 'fieldList/deleteField',
                     field: field,
                 });
@@ -75,87 +84,72 @@ const FieldsList = ({ fieldList, dispatch }) => {
 
     }
 
-
-    function findAttribute(ele, attr) {
-        if (!ele)
-            return '';
-        while (!ele.getAttribute(attr)) {
-            if (ele.id === 'root')
-                return '';
-            else {
-                ele = ele.parentElement;
-            }
-            if (!ele)
-                return '';
-        }
-        return ele.getAttribute(attr);
-    }
-    function onDragStart(e) {
-        let real = e.target;
+    function onDragStart(e: React.DragEvent) {
+        let real = e.target as HTMLElement;
         if (real.tagName === "LI" && real.classList.contains("ant-list-item")) {
             e.dataTransfer.setData("id", findAttribute(real, "data-id"));
             e.dataTransfer.setData("type", findAttribute(real, "data-type"));
         }
     }
-    function getRealDOM(s) {
-        let real = s;
+    function getRealDOM(s: HTMLElement) {
+        let real = s as HTMLElement;
         if (real.tagName === "path") {
-            real = real.parentElement
+            real = real.parentElement as HTMLElement
         }
         if (real.tagName === "svg") {
-            real = real.parentElement
+            real = real.parentElement as HTMLElement
         }
         if (real.tagName === "EM") {
-            real = real.parentElement
+            real = real.parentElement as HTMLElement
         }
         if (real.tagName === "A") {
-            real = real.parentElement
+            real = real.parentElement as HTMLElement
         }
         if (real.tagName === "I") {
-            real = real.parentElement
+            real = real.parentElement as HTMLElement
         }
         if (real.tagName === "LI" && !real.classList.contains("ant-list-item")) {
-            real = real.parentElement
+            real = real.parentElement as HTMLElement
         }
         if (real.tagName === "UL") {
-            real = real.parentElement
+            real = real.parentElement as HTMLElement
         }
         if (real.tagName === "SPAN") {
-            real = real.parentElement
+            real = real.parentElement as HTMLElement
         }
         if (real.tagName === "SPAN") {
-            real = real.parentElement
+            real = real.parentElement as HTMLElement
         }
         if (real.tagName === "SPAN") {
-            real = real.parentElement
+            real = real.parentElement as HTMLElement
         }
         if (real.tagName === "H4") {
-            real = real.parentElement
+            real = real.parentElement as HTMLElement
         }
         if (real.tagName === "DIV") {
-            real = real.parentElement
+            real = real.parentElement as HTMLElement
         }
         if (real.tagName === "DIV") {
-            real = real.parentElement
+            real = real.parentElement as HTMLElement
         }
         if (real.tagName === "DIV") {
-            real = real.parentElement
+            real = real.parentElement as HTMLElement
         }
         return real
     }
-    function onDrop(e) {
+    function onDrop(e: React.DragEvent) {
         e.preventDefault()
         let formdata = {
             Source: 0,
             Target: 0,
             Position: 0,
         }
-        let real = getRealDOM(e.target)
+        let real = getRealDOM(e.target as HTMLElement)
         real.classList.add("dragEnterList")
         if (real.tagName === "LI" && real.classList.contains("ant-list-item")) {
             real.classList.remove("dragEnterList")
-            formdata.Source = e.dataTransfer.getData("id");
-            formdata.Target = findAttribute(real, "data-id")
+            formdata.Source = parseInt(e.dataTransfer.getData("id"));
+            formdata.Target = parseInt(findAttribute(real, "data-id"));
             let sourceType = e.dataTransfer.getData("type");
             if (e.clientY - 71 - real.offsetTop < real.clientHeight / 2) {
                 formdata.Position = 1;
@@ -163,16 +157,16 @@ const FieldsList = ({ fieldList, dispatch }) => {
             else {
                 formdata.Position = 2;
             }
-            dispatch({
+            props.dispatch({
                 type: 'fieldList/updateSeq',
                 move: formdata,
-                cardId: fieldList.cardId
+                cardId: props.fieldList.cardId
             });
         }
 
     }
-    function onDragOver(e) {
-        let real = getRealDOM(e.target);
+    function onDragOver(e: React.DragEvent) {
+        let real = getRealDOM(e.target as HTMLElement);
         if (real.tagName === "LI" && real.classList.contains("drawer-list")) {
             if (e.clientY - 71 - real.offsetTop < real.clientHeight / 2) {
                 real.classList.add("dragTop")
@@ -187,15 +181,15 @@ const FieldsList = ({ fieldList, dispatch }) => {
         }
         e.preventDefault()
     }
-    function onDragEnter(e) {
-        let real = getRealDOM(e.target);
+    function onDragEnter(e: React.DragEvent) {
+        let real = getRealDOM(e.target as HTMLElement);
         if (real.tagName === "LI" && real.classList.contains("drawer-list")) {
             real.classList.add("dragEnterList")
         }
         e.preventDefault()
     }
-    function onDragLeave(e) {
-        let real = e.target
+    function onDragLeave(e: React.DragEvent) {
+        let real = e.target as HTMLElement
         if (real.tagName === "LI" && real.classList.contains("drawer-list")) {
             real.classList.remove("dragEnterList")
         }
@@ -203,7 +197,7 @@ const FieldsList = ({ fieldList, dispatch }) => {
     }
 
     return <List
-        dataSource={fieldList.fieldList}
+        dataSource={props.fieldList.fields}
         footer={<Button type="dashed" block onClick={() => { createField() }}>新增</Button>}
         renderItem={item => (
             <List.Item
@@ -215,13 +209,17 @@ const FieldsList = ({ fieldList, dispatch }) => {
                 onDragLeave={(event) => { onDragLeave(event) }}
                 onDragOver={(event) => { onDragOver(event) }}
                 allowdrop="true"
-                key={item.id} data-id={item.Id} data-type={"field"}
+                key={"field_" + item.Id} data-id={item.Id} data-type={"field"}
                 actions={[
-                    <Button type="link" onClick={() => { updateField(item) }} key={`a-${item.id}`}>
-                        修改
-            </Button>, <Button type="link" danger onClick={() => { deleteField(item) }} key={`a-${item.id}`}>
-                        删除
-            </Button>,
+                    <Button type="link" onClick={() => { updateField(item) }} key={`a-${item.Id}`}>
+                        {intl.formatMessage({
+                            id: 'update',
+                        })}
+                    </Button>, <Button type="link" danger onClick={() => { deleteField(item) }} key={`a-${item.Id}`}>
+                        {intl.formatMessage({
+                            id: 'delete',
+                        })}
+                    </Button>,
                 ]}
             >
                 <List.Item.Meta
@@ -247,6 +245,8 @@ const FieldsList = ({ fieldList, dispatch }) => {
         )}
     />
 };
-export default connect(({ fieldList }) => ({
-    fieldList,
-}))(FieldsList);
+export default connect((state: IStore) => {
+    return {
+        fieldList: state.fieldList,
+    }
+})(FieldsList);

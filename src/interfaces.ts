@@ -34,6 +34,7 @@ export interface ICard {
     Locale: ILocale,
     Fields: IField[],
     data: any[],
+    IsVisible: boolean,
     Styles: IStyle[],
 }
 
@@ -50,6 +51,8 @@ export interface IField {
     Text: string,
     Type: string,
     IsVisible: boolean,
+    Default: string,
+    Filter: string,
     Locale: ILocale,
 }
 export interface IStyle {
@@ -71,6 +74,7 @@ export interface IViewAction {
     URL: string,
     DoubleCheck: boolean,
     Locale: ILocale,
+    IsVisible: boolean,
     Parameters: IParameter[],
 }
 export interface IParameter {
@@ -105,40 +109,6 @@ export interface ILocale {
     Default: string,
 }
 
-export interface drawStateProps {
-    cardId: number,
-    cardChanged: boolean,
-    visible: boolean,
-    subVisible: boolean,
-    styleVisible: boolean,
-    title: string,
-    subTitle: string,
-}
-export interface contextMenuStateProps {
-    visible: boolean,
-    menu: string,
-    left: number,
-    top: number,
-    record: any,
-}
-export interface actionListStateProps {
-    cardId: number,
-    actions: IViewAction[],
-}
 export interface renderStateProps {
 
-}
-export interface fieldListStateProps {
-    cardId: number,
-    fields: IField[],
-}
-export interface fieldInfoStateProps extends IField {
-    visible: boolean,
-    dirty: boolean,
-}
-export interface parameterStateProps {
-    cardId: number,
-    visible: boolean,
-    dirty: boolean,
-    parameters: IParameter[],
 }

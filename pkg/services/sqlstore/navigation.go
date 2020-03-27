@@ -183,7 +183,7 @@ func GetPageByName(query *models.GetPageByNameQuery) error {
 		return err
 	}
 	if !success {
-		return errors.New("no page found;Name:" + query.PageName)
+		return models.ErrPageNotFound
 	}
 	query.Result = &page
 	return nil

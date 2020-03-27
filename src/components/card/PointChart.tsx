@@ -4,10 +4,9 @@ import { connect, useIntl, getLocale } from 'umi';
 import { getLocaleText } from '@/util'
 import { Chart, Geom, Axis, Tooltip, Legend, Coord } from 'bizcharts';
 import { ICard, IStyle } from '@/interfaces';
+import { CardContentProps } from '@/models/card';
 
-interface cardProps {
-    card: ICard,
-}
+
 interface ISeriesData {
     xAxis: number,
     y1Axis: number,
@@ -19,7 +18,7 @@ interface setting {
     y1Axis?: IStyle,
     y2Axis?: IStyle,
 }
-const RectChart = (props: cardProps) => {
+const RectChart = (props: CardContentProps) => {
     // convert styles to setting
     let setting: setting = {
     }
@@ -82,8 +81,8 @@ const RectChart = (props: cardProps) => {
         {(setting.y1Axis) && (setting.y1Axis.Field) && <Axis name="y1Axis" position="left" title />}
         {(setting.y2Axis) && (setting.y2Axis.Field) && <Axis name="y2Axis" position="right" title />}
 
-        {(setting.y1Axis) && (setting.y1Axis.Field) && 
-            <Geom type={'point'} shape={'circle'}  position="xAxis*y1Axis" color={setting.y1Axis?.Value ?? "#fad248"} size={3} />}
+        {(setting.y1Axis) && (setting.y1Axis.Field) &&
+            <Geom type={'point'} shape={'circle'} position="xAxis*y1Axis" color={setting.y1Axis?.Value ?? "#fad248"} size={3} />}
 
 
         {(setting.y2Axis) && (setting.y2Axis.Field) &&

@@ -24,8 +24,9 @@ export default {
     },
     effects: {
         *loadPage(action: pageStateProps, handler: EffectsCommandMap) {
+            console.log("loadPage")
             let cards: ICard[] = []
-            
+
             let pageName = ''
 
             let app = getDvaApp();
@@ -37,7 +38,9 @@ export default {
             route = route.filter((str) => str)
             yield handler.put({ type: 'global/savePathName', PathName: pathname, });
             pageName = route.pop() ?? ""
-
+            if (!pageName) {
+                return;
+            }
             const data = yield handler.call(reqwest, {
                 url: '/api/card'
                 , type: 'json'
@@ -47,6 +50,9 @@ export default {
                     PageName: pageName
                 }
             });
+            if (!data.Success) {
+                pageName = "";
+            }
             cards = data.Data
             console.log(cards)
 
