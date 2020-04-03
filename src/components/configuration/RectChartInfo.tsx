@@ -3,7 +3,7 @@ import { Row, Col, Form, Input, Select, Button } from 'antd';
 import { connect, useIntl } from 'umi';
 import { DispatchProp } from 'react-redux';
 import { IValueChange } from '@/interfaces'
-import { getLocaleText, getInputValue } from '@/util'
+import { getLocaleText } from '@/util'
 import { rectChartStateProps, confirmRectChartConfigCommand, showRectChartConfigCommand } from '@/models/rectChartConfig'
 import { IStore } from '@/store'
 const { Option } = Select;

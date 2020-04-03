@@ -22,7 +22,6 @@ const RectChart = (props: CardContentProps) => {
     // convert styles to setting
     let setting: setting = {
     }
-    console.log(props.card.Styles)
     props.card.Styles.forEach(st => {
         if (st.Property === "XAXIS") {
             setting.xAxis = st

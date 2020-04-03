@@ -73,6 +73,7 @@ const CardsList = (props: CardListProps) => {
             Source: 0,
             Target: 0,
             Position: 0,
+            PageId:props.cardList[0].PageId,
         }
         let real = getRealDOM(e.target as HTMLElement)
         real.classList.add("dragEnterList")

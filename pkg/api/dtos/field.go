@@ -24,12 +24,15 @@ type UpdateFieldForm struct {
 	Type      string `form:"Type"`
 	Default   string `form:"Default"`
 	Filter    string `form:"Filter"`
+	CardId    int64  `form:"CardId"`
 }
 type UpdateFieldSeqForm struct {
 	Source   int64 `form:"Source"`
 	Target   int64 `form:"Target"`
 	Position int32 `form:"Position"`
+	CardId   int64 `form:"CardId"`
 }
 type DeleteFieldForm struct {
 	FieldId int64 `form:"Id"`
+	CardId  int64 `form:"CardId"`
 }

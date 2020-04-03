@@ -16,7 +16,6 @@ export default {
     state: {},
     reducers: {
         show(state: actionInfoStateProps, action: showProps) {
-            console.log('show actionInfoConfig')
             return { visible: true, dirty: false, ...action.action }
         },
         dirty(state: actionInfoStateProps, action: IValueChange) {

@@ -24,7 +24,6 @@ const PageHead = (props: PageHeadProps) => {
         });
     }
     function handleMenuClick(key: ClickParam) {
-        console.log(key)
         if (key.key == "LOGOUT") {
             window.open('/logout','_self')
         }

@@ -3,6 +3,7 @@ import reqwest from 'reqwest'
 import { EffectsCommandMap, SubscriptionAPI } from 'dva'
 import { ICard } from '@/interfaces'
 import { IStore } from '@/store'
+import { Datetime2Offset, Date2Offset, Offset2Date, Offset2Datetime } from '@/util'
 
 export interface cardStateProps extends ICard {
 }
@@ -70,7 +71,15 @@ const CardModel = {
                 return
             }
             card.Reader.Parameters.forEach((parameter, idx) => {
-                params['param' + idx] = parameter.Default
+                if (parameter.Field.Type === 'datetime') {
+                    params['param' + idx] = Offset2Datetime(parameter.Default)
+                }
+                else if(parameter.Field.Type==='date'){
+                    params['param' + idx] = Offset2Date(parameter.Default)
+                }
+                else {
+                    params['param' + idx] = parameter.Default
+                }
             })
             const data = yield handler.call(reqwest, {
                 url: '/data/read'

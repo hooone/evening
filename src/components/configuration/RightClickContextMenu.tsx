@@ -216,7 +216,7 @@ const RightClickContextMenu = (props: RightClickContextMenuProps) => {
                 {(props.contextMenu.menu === "card") &&
                     <li onClick={() => {
                         let locale: ILocale = {
-                            "zh-CN": '删除卡片',
+                            "zh-CN": '删除窗体',
                             "en-US": "delete card",
                             "Default": "delete card",
                         }

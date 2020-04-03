@@ -79,5 +79,10 @@ const en_US = {
     evening_build: "build",
     TABLE: "data table",
     RECT: "bar or line chart",
+    tocreatecard: "right click to create card",
+    m404:"error 404 not found",
+    loginfailed:"login failed",
+    username:"username",
+    password:"password",
 }
 export default en_US; 

@@ -1,9 +1,11 @@
 import React from 'react';
+import { useIntl } from 'umi'
 import styles from './login.css';
 import { Store } from 'rc-field-form/lib/interface';
 import { Form, Input, Button, Checkbox, Layout, message, Row, Col } from 'antd';
 import reqwest from "reqwest"
 import { CommonResult } from '@/interfaces';
+import { RightSquareTwoTone } from '@ant-design/icons';
 
 const layout = {
   labelCol: { span: 8 },
@@ -13,11 +15,8 @@ const tailLayout = {
   wrapperCol: { offset: 8, span: 16 },
 };
 const Login = () => {
+  const intl = useIntl();
   const onFinish = (values: Store) => {
-    console.log({
-      User: values.username,
-      Password: values.password,
-    })
     reqwest({
       url: '/login',
       type: 'json',
@@ -27,7 +26,11 @@ const Login = () => {
         Password: values.password,
       }
       , error: function () {
-        message.error('登录失败，请检查用户名密码');
+        message.error(intl.formatMessage(
+          {
+            id: 'loginfailed',
+          }
+        ));
       }
       , success: function (data: CommonResult) {
         window.location.href = "/home"
@@ -40,43 +43,67 @@ const Login = () => {
 
   return (
     <Layout style={{ minHeight: '100vh' }}>
-      <Layout.Header />
       <Layout.Content>
-        <Row>
-          <Col offset={8} span={8}>
-            <Form
-              {...layout}
-              name="basic"
-              initialValues={{ remember: true }}
-              onFinish={(values: Store) => { onFinish(values) }}
-              onFinishFailed={onFinishFailed}
-            >
-              <Form.Item
-                label="Username"
-                name="username"
-                rules={[{ required: true, message: 'Please input your username!' }]}
+        <div style={{
+          overflow: 'auto',
+          height: '300px',
+          width: '100%',
+          position: 'absolute',
+          margin: 'auto',
+          top: '0',
+          bottom: '0',
+          left: '0',
+          right: '0',
+          verticalAlign: 'middle',
+          fontSize: '60px',
+        }}>
+          <Row>
+            <Col span={8}  offset={8} >
+              <Form
+                {...layout}
+                name="basic"
+                initialValues={{ remember: true }}
+                onFinish={(values: Store) => { onFinish(values) }}
+                onFinishFailed={onFinishFailed}
               >
-                <Input />
-              </Form.Item>
+                <Form.Item
+                  label={intl.formatMessage(
+                    {
+                      id: 'username',
+                    }
+                  )}
+                  name="username"
+                  rules={[{ required: true, message: 'Please input your username!' }]}
+                >
+                  <Input />
+                </Form.Item>
 
-              <Form.Item
-                label="Password"
-                name="password"
-                rules={[{ required: true, message: 'Please input your password!' }]}
-              >
-                <Input.Password />
-              </Form.Item>
+                <Form.Item
+                  label={intl.formatMessage(
+                    {
+                      id: 'password',
+                    }
+                  )}
+                  name="password"
+                  rules={[{ required: true, message: 'Please input your password!' }]}
+                >
+                  <Input.Password />
+                </Form.Item>
 
-              <Form.Item {...tailLayout}>
-                <Button type="primary" htmlType="submit">
-                  Submit
-        </Button>
-              </Form.Item>
-            </Form>
-          </Col>
-        </Row>
+                <Form.Item {...tailLayout}>
+                  <Button type="primary" htmlType="submit">
+                    {intl.formatMessage(
+                      {
+                        id: 'confirm',
+                      }
+                    )}
+                  </Button>
+                </Form.Item>
+              </Form>
+            </Col>
+          </Row>
+        </div>
       </Layout.Content>
-      <Layout.Footer />
     </Layout>
   );
 };

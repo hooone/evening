@@ -417,9 +417,9 @@ export default {
         },
         * createCard(action: contextMenuStateProps, handler: EffectsCommandMap) {
             let constAction = {
-                Text: '添加卡片',
+                Text: '添加窗体',
                 Locale: {
-                    "zh-CN": '添加卡片',
+                    "zh-CN": '添加窗体',
                     "en-US": "create card"
                 },
                 DoubleCheck: false,
@@ -499,9 +499,9 @@ export default {
         },
         * deleteCard(action: contextMenuStateProps, handler: EffectsCommandMap) {
             let constAction = {
-                Text: '删除卡片',
+                Text: '删除窗体',
                 Locale: {
-                    "zh-CN": '删除卡片',
+                    "zh-CN": '删除窗体',
                     "en-US": "delete card"
                 },
                 DoubleCheck: true,

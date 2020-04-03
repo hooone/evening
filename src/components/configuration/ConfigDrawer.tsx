@@ -74,7 +74,7 @@ const ConfigDrawer = (props: ConfigDrawerProps) => {
             </TabPane>
             {(props.draw.styleVisible) && <TabPane tab={intl.formatMessage({
                 id: 'style',
-            })} key={"relation"}>
+            })} key={"style"}>
                 <RectChartInfo />
                 <PointChartInfo />
             </TabPane>}

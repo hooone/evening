@@ -20,12 +20,15 @@ type UpdateViewActionForm struct {
 	Text         string `form:"Text"`
 	DoubleCheck  bool   `form:"DoubleCheck"`
 	Type         string `form:"Type"`
+	CardId       int64  `form:"CardId"`
 }
 type UpdateViewActionSeqForm struct {
 	Source   int64 `form:"Source"`
 	Target   int64 `form:"Target"`
 	Position int32 `form:"Position"`
+	CardId   int64 `form:"CardId"`
 }
 type DeleteViewActionForm struct {
 	ViewActionId int64 `form:"Id"`
+	CardId       int64 `form:"CardId"`
 }

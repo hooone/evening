@@ -8,13 +8,19 @@ import (
 	"path"
 	"sync"
 
+	"github.com/hooone/evening/pkg/api/middleware"
 	"github.com/hooone/evening/pkg/api/routing"
 	httpstatic "github.com/hooone/evening/pkg/api/static"
 	"github.com/hooone/evening/pkg/bus"
-	"github.com/hooone/evening/pkg/infra/log"
-	"github.com/hooone/evening/pkg/middleware"
+	"github.com/hooone/evening/pkg/log"
 	"github.com/hooone/evening/pkg/registry"
+	"github.com/hooone/evening/pkg/services/action"
 	"github.com/hooone/evening/pkg/services/auth"
+	"github.com/hooone/evening/pkg/services/card"
+	"github.com/hooone/evening/pkg/services/field"
+	"github.com/hooone/evening/pkg/services/navigation"
+	"github.com/hooone/evening/pkg/services/parameter"
+	"github.com/hooone/evening/pkg/services/style"
 	"github.com/hooone/evening/pkg/setting"
 	"github.com/hooone/evening/pkg/util/errutil"
 	macaron "gopkg.in/macaron.v1"
@@ -35,9 +41,16 @@ type HTTPServer struct {
 	context context.Context
 	httpSrv *http.Server
 
-	RouteRegister    routing.RouteRegister  `inject:""`
-	Bus              bus.Bus                `inject:""`
-	AuthTokenService *auth.UserTokenService `inject:""`
+	RouteRegister routing.RouteRegister `inject:""`
+	Bus           bus.Bus               `inject:""`
+
+	AuthTokenService  *auth.UserTokenService        `inject:""`
+	NavigationService *navigation.NavigationService `inject:""`
+	CardService       *card.CardService             `inject:""`
+	FieldService      *field.FieldService           `inject:""`
+	ActionService     *action.ActionService         `inject:""`
+	StyleService      *style.StyleService           `inject:""`
+	ParameterService  *parameter.ParameterService   `inject:""`
 
 	Cfg *setting.Cfg `inject:""`
 }

@@ -3,9 +3,11 @@ import { EffectsCommandMap, SubscriptionAPI } from 'dva'
 import reqwest from 'reqwest'
 import { navMoveProps, IFolder } from '@/interfaces'
 import { IStore } from '@/store'
+import { getLocaleText } from '@/util';
 
 export interface navStateProps {
     Navs: IFolder[],
+    Path: string,
     collapsed: boolean,
 }
 export interface ICollapseCommand {
@@ -48,10 +50,20 @@ export default {
                 url: '/api/navigation'
                 , type: 'json'
                 , method: 'post'
-                , data: {}
+                , data: { lang: getLocale(), }
             });
-            yield handler.put({ type: 'saveNav', Navs: data.Data, Path: pathname, });
-            console.log(data)
+            let folders: IFolder[] = data.Data
+            folders.forEach(folder => {
+                if (folder.IsFolder) {
+                    folder.Text = getLocaleText(folder.Locale)
+                }
+                if (folder.Pages) {
+                    folder.Pages.forEach(page => {
+                        page.Text = getLocaleText(page.Locale)
+                    })
+                }
+            })
+            yield handler.put({ type: 'saveNav', Navs: folders, Path: pathname, });
             yield handler.put({
                 type: 'global/saveUser',
                 User: data.Message,
@@ -64,15 +76,26 @@ export default {
                 url: '/api/navigation/move'
                 , type: 'json'
                 , method: 'post'
-                , data: action
+                , data: { lang: getLocale(), ...action }
             });
             const data = yield handler.call(reqwest, {
                 url: '/api/navigation'
                 , type: 'json'
                 , method: 'post'
-                , data: {}
+                , data: { lang: getLocale(), }
             });
-            yield handler.put({ type: 'loadNav', Navs: data.Data, Path: nav.Path, });
+            let folders: IFolder[] = data.Data
+            folders.forEach(folder => {
+                if (folder.IsFolder) {
+                    folder.Text = getLocaleText(folder.Locale)
+                }
+                if (folder.Pages) {
+                    folder.Pages.forEach(page => {
+                        page.Text = getLocaleText(page.Locale)
+                    })
+                }
+            })
+            yield handler.put({ type: 'loadNav', Navs: folders, Path: nav.Path, });
         },
     },
     subscriptions: {
@@ -92,7 +115,7 @@ export default {
                 lang: getLocale(),
             });
             handler.history.listen(location => {
-                console.log("history listem")
+                console.log("history listen")
                 console.log(handler.history.location.pathname)
                 handler.dispatch({
                     type: 'page/loadPage',

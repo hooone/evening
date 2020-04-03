@@ -17,7 +17,7 @@ export function getLocaleText(locale: ILocale): string {
 //用原生JS进行表单操作，根据元素id获取输入值
 export function getInputValue(id: string): string {
     let result: string = '';
-    let p1 = document.getElementById(id);
+    let p1 = document.getElementsByClassName(id)[0];
     if (!p1) {
         return '';
     }
@@ -91,4 +91,108 @@ export function findAttribute(ele: HTMLElement, attr: string): string {
         }
     }
     return ele.getAttribute(attr) ?? "";
+}
+
+function dateFormat(date: Date, fmt: string) {
+    var o = {
+        "M+": date.getMonth() + 1,
+        "d+": date.getDate(),
+        "h+": date.getHours(),
+        "m+": date.getMinutes(),
+        "s+": date.getSeconds(),
+        "q+": Math.floor((date.getMonth() + 3) / 3),
+        "S": date.getMilliseconds()
+    };
+    if (/(y+)/.test(fmt)) fmt = fmt.replace(RegExp.$1, (date.getFullYear() + "").substr(4 - RegExp.$1.length));
+    for (var k in o)
+        if (new RegExp("(" + k + ")").test(fmt)) fmt = fmt.replace(RegExp.$1, (RegExp.$1.length === 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
+    return fmt;
+}
+
+export function Offset2Datetime(offset: any) {
+    let timeOffset = parseInt(offset)
+    if (typeof (timeOffset) !== 'undefined' && (!isNaN(timeOffset)) && (offset.split(':').length == 1) && (offset.split('/').length == 1)) {
+        let now = new Date().getTime();
+        let target = new Date(now - timeOffset);
+        return dateFormat(target, "yyyy-MM-dd hh:mm:ss");
+    }
+    else if (typeof (offset) === "string") {
+        let timeA = new Date(offset.replace("-", "/"));
+        if (!isNaN(timeA.getTime())) {
+            return dateFormat(timeA, "yyyy-MM-dd hh:mm:ss");
+        }
+        else {
+            return dateFormat(new Date(), "yyyy-MM-dd hh:mm:ss");
+        }
+    }
+    else if (typeof (offset) === "object") {
+        if (typeof (offset.getTime) !== "undefined" && (!isNaN(offset.getTime())) && (offset.split(':').length == 1) && (offset.split('/').length == 1)) {
+            return dateFormat(offset, "yyyy-MM-dd hh:mm:ss");
+        }
+        else {
+            return dateFormat(new Date(), "yyyy-MM-dd hh:mm:ss");
+        }
+    }
+    else {
+        return dateFormat(new Date(), "yyyy-MM-dd hh:mm:ss");
+    }
+}
+
+export function Datetime2Offset(time: any) {
+    if (typeof (time) === "string") {
+        time = time.replace("-", "/");
+    }
+    let timeformat = new Date(time);
+    if (typeof (timeformat) !== "undefined") {
+        return new Date().getTime() - timeformat.getTime();
+    }
+    else {
+        return 0;
+    }
+}
+
+export function Offset2Date(offset: any) {
+    let timeOffset = parseInt(offset)
+    if (typeof (timeOffset) !== 'undefined' && (!isNaN(timeOffset))) {
+        let today = new Date()
+        let now = new Date(today.getFullYear(), today.getMonth(), today.getDate()).getTime();
+        let target = new Date(now - timeOffset);
+        return dateFormat(target, "yyyy-MM-dd");
+    }
+    else if (typeof (offset) === "string") {
+        let timeA = new Date(offset.replace("-", "/"));
+        if (!isNaN(timeA.getTime())) {
+            return dateFormat(timeA, "yyyy-MM-dd");
+        }
+        else {
+            return dateFormat(new Date(), "yyyy-MM-dd");
+        }
+    }
+    else if (typeof (offset) === "object") {
+        if (typeof (offset.getTime) !== "undefined" && (!isNaN(offset.getTime()))) {
+            return dateFormat(offset, "yyyy-MM-dd");
+        }
+        else {
+            return dateFormat(new Date(), "yyyy-MM-dd");
+        }
+    }
+    else {
+        return dateFormat(new Date(), "yyyy-MM-dd");
+    }
+}
+
+export function Date2Offset(time: any) {
+    if (typeof (time) === "string") {
+        time = time.replace("-", "/");
+    }
+    let timeformat = new Date(time);
+    if (typeof (timeformat) !== "undefined") {
+        let today = new Date()
+        let now = new Date(today.getFullYear(), today.getMonth(), today.getDate()).getTime();
+        let inputtime = new Date(timeformat.getFullYear(), timeformat.getMonth(), timeformat.getDate()).getTime();
+        return now - inputtime;
+    }
+    else {
+        return 0;
+    }
 }

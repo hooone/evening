@@ -1,7 +1,8 @@
 import reqwest from 'reqwest'
+import { message } from 'antd'
 import { getLocale } from 'umi'
 import { EffectsCommandMap } from 'dva'
-import { IViewAction, IMove } from '@/interfaces'
+import { IViewAction, IMove, CommonResult } from '@/interfaces'
 
 
 export interface actionListStateProps {
@@ -36,12 +37,18 @@ export default {
         *deleteAction(action: actionProps, handler: EffectsCommandMap) {
             if (action.action.Id !== 0) {
                 //create action
-                const data = yield handler.call(reqwest, {
+                const data: CommonResult = yield handler.call(reqwest, {
                     url: '/api/action/delete'
                     , type: 'json'
                     , method: 'post'
-                    , data: action
+                    , data: action.action
                 });
+                if (!data.Success) {
+                    if (data.Message) {
+                        message.error(data.Message);
+                    }
+                    return;
+                }
                 let actions: IViewAction[] = []
                 actions = data.Data;
                 //flash action list

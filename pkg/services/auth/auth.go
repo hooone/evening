@@ -7,8 +7,8 @@ import (
 	"time"
 
 	"github.com/hooone/evening/pkg/bus"
-	"github.com/hooone/evening/pkg/infra/log"
-	"github.com/hooone/evening/pkg/models"
+	"github.com/hooone/evening/pkg/log"
+	"github.com/hooone/evening/pkg/managers/user"
 	"github.com/hooone/evening/pkg/registry"
 	"github.com/hooone/evening/pkg/setting"
 	"github.com/hooone/evening/pkg/util"
@@ -33,7 +33,7 @@ func (s *UserTokenService) Init() error {
 }
 
 //CreateToken create token and save
-func (s *UserTokenService) CreateToken(ctx context.Context, userId int64, clientAddr, userAgent string) (*models.UserToken, error) {
+func (s *UserTokenService) CreateToken(ctx context.Context, userId int64, clientAddr, userAgent string) (*user.UserToken, error) {
 	clientIP, err := util.ParseIPAddress(clientAddr)
 	if err != nil {
 		s.log.Debug("Failed to parse client IP address", "clientAddr", clientAddr, "err", err)
@@ -48,7 +48,7 @@ func (s *UserTokenService) CreateToken(ctx context.Context, userId int64, client
 
 	now := getTime().Unix()
 
-	userAuthToken := models.UserToken{
+	userAuthToken := user.UserToken{
 		UserId:        userId,
 		AuthToken:     hashedToken,
 		PrevAuthToken: hashedToken,
@@ -60,7 +60,7 @@ func (s *UserTokenService) CreateToken(ctx context.Context, userId int64, client
 		SeenAt:        0,
 		AuthTokenSeen: false,
 	}
-	cmd := models.CreateTokenCommand{
+	cmd := user.CreateTokenCommand{
 		Data: userAuthToken,
 	}
 
@@ -75,12 +75,12 @@ func (s *UserTokenService) CreateToken(ctx context.Context, userId int64, client
 	return cmd.Result, err
 }
 
-func (s *UserTokenService) LookupToken(ctx context.Context, unhashedToken string) (*models.UserToken, error) {
+func (s *UserTokenService) LookupToken(ctx context.Context, unhashedToken string) (*user.UserToken, error) {
 	hashedToken := hashToken(unhashedToken)
 	if setting.Env == setting.DEV {
 		s.log.Debug("looking up token", "unhashed", unhashedToken, "hashed", hashedToken)
 	}
-	query := models.GetTokenQuery{
+	query := user.GetTokenQuery{
 		HashedToken: hashedToken,
 	}
 	if err := bus.Dispatch(&query); err != nil {
@@ -94,12 +94,12 @@ func hashToken(token string) string {
 	return hex.EncodeToString(hashBytes[:])
 }
 
-func (s *UserTokenService) RevokeToken(ctx context.Context, token *models.UserToken) error {
+func (s *UserTokenService) RevokeToken(ctx context.Context, token *user.UserToken) error {
 	if token == nil {
-		return models.ErrUserTokenNotFound
+		return user.ErrUserTokenNotFound
 	}
 
-	cmd := models.RemoveTokenCommand{
+	cmd := user.RemoveTokenCommand{
 		TokenId: token.Id,
 	}
 
@@ -110,7 +110,7 @@ func (s *UserTokenService) RevokeToken(ctx context.Context, token *models.UserTo
 
 	if rowsAffected == 0 {
 		s.log.Debug("user auth token not found/revoked", "tokenId", token.Id, "userId", token.UserId, "clientIP", token.ClientIp, "userAgent", token.UserAgent)
-		return models.ErrUserTokenNotFound
+		return user.ErrUserTokenNotFound
 	}
 
 	s.log.Debug("user auth token revoked", "tokenId", token.Id, "userId", token.UserId, "clientIP", token.ClientIp, "userAgent", token.UserAgent)

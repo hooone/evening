@@ -48,8 +48,8 @@ const ActionsList = (props: ActionListProps) => {
     }
     function updateParameter(action: IViewAction) {
         props.dispatch({
-            type: 'parameterInfoConfig/show',
-            parameters: action.Parameters,
+            type: 'parameterInfoConfig/load',
+            actionId: action.Id,
             cardId: props.actionList.cardId,
         });
         props.dispatch({
@@ -150,6 +150,7 @@ const ActionsList = (props: ActionListProps) => {
             Source: 0,
             Target: 0,
             Position: 0,
+            CardId: props.actionList.cardId,
         }
         let real = getRealDOM(e.target as HTMLElement)
         real.classList.add("dragEnterList")
@@ -167,7 +168,7 @@ const ActionsList = (props: ActionListProps) => {
             props.dispatch({
                 type: 'actionList/updateSeq',
                 move: formdata,
-                cardId: props.actionList.cardId
+                cardId: props.actionList.cardId,
             });
         }
 

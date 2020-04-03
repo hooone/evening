@@ -52,7 +52,6 @@ export default {
         Styles: card.Styles,
       }
       yield handler.put(showStyle);
-      console.log(card)
       let showPointStyle: showPointChartConfigCommand = {
         type: 'pointChartConfig/show',
         Fields: card.Fields,

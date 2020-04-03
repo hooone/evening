@@ -3,7 +3,7 @@ import { Row, Col, Form, Input, Select, Button } from 'antd';
 import { connect, useIntl } from 'umi';
 import { DispatchProp } from 'react-redux';
 import { IModal, IViewAction } from '@/interfaces'
-import { getLocaleText, getInputValue } from '@/util'
+import { getLocaleText } from '@/util'
 import { cardInfoStateProps } from '@/models/cardInfoConfig'
 import { IStore } from '@/store'
 const { Option } = Select;
@@ -64,7 +64,7 @@ const CardInfo = (props: CardInfoProps) => {
                 >
                     <Select onChange={(value) => { onChange("Style", value) }}
                         value={props.cardInfoConfig.Style} >
-                        <Option value="TABLE"> label={intl.formatMessage({
+                        <Option value="TABLE"> {intl.formatMessage({
                             id: 'table',
                         })}</Option>
                         <Option value="RECT">{intl.formatMessage({

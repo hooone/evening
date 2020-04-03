@@ -1,4 +1,5 @@
 import { getLocale } from 'umi';
+import { message } from 'antd'
 import { EffectsCommandMap } from 'dva'
 import reqwest from 'reqwest'
 import { getLocaleText } from '@/util'
@@ -107,7 +108,15 @@ export default {
                 , method: 'post'
                 , data: { lang: getLocale(), CardId: action.cardId }
             });
+            if (!data.Success) {
+                if (data.Message)
+                    message.error(data.Message)
+                return
+            }
             let card: ICard = data.Data;
+            if (!card || !card.Id) {
+                return
+            }
             card.Text = getLocaleText(card.Locale)
             card.Fields.forEach(f => {
                 f.Text = getLocaleText(f.Locale)

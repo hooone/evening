@@ -23,6 +23,7 @@ type UpdateCardForm struct {
 	Pos    int32  `form:"Pos"`
 }
 type UpdateCardSeqForm struct {
+	PageId   int64 `form:"PageId"`
 	Source   int64 `form:"Source"`
 	Target   int64 `form:"Target"`
 	Position int32 `form:"Position"`

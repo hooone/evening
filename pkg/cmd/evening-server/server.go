@@ -14,9 +14,10 @@ import (
 	"github.com/hooone/evening/pkg/api"
 	"github.com/hooone/evening/pkg/api/routing"
 	"github.com/hooone/evening/pkg/bus"
-	"github.com/hooone/evening/pkg/infra/log"
+	"github.com/hooone/evening/pkg/log"
+	_ "github.com/hooone/evening/pkg/managers/migration"
+	_ "github.com/hooone/evening/pkg/managers/sqlstore"
 	"github.com/hooone/evening/pkg/registry"
-	_ "github.com/hooone/evening/pkg/services/sqlstore"
 	"github.com/hooone/evening/pkg/setting"
 	"github.com/hooone/evening/pkg/util/errutil"
 

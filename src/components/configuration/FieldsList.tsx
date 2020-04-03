@@ -40,7 +40,6 @@ const FieldsList = (props: FieldsListProps) => {
         });
     }
     function updateField(field: IField) {
-        console.log(field)
         props.dispatch({
             type: 'fieldInfoConfig/show',
             field: field,
@@ -143,6 +142,7 @@ const FieldsList = (props: FieldsListProps) => {
             Source: 0,
             Target: 0,
             Position: 0,
+            CardId: props.fieldList.cardId,
         }
         let real = getRealDOM(e.target as HTMLElement)
         real.classList.add("dragEnterList")
@@ -195,7 +195,6 @@ const FieldsList = (props: FieldsListProps) => {
         }
         e.preventDefault()
     }
-
     return <List
         dataSource={props.fieldList.fields}
         footer={<Button type="dashed" block onClick={() => { createField() }}>新增</Button>}

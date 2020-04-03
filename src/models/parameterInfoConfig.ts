@@ -1,12 +1,13 @@
 import { getLocale } from 'umi'
 import reqwest from 'reqwest'
 import { EffectsCommandMap } from 'dva'
-
-import { IValueChange, IParameter, IViewAction } from '@/interfaces'
+import { Datetime2Offset, Date2Offset, Offset2Date, Offset2Datetime } from '@/util'
+import { IValueChange, IParameter, IViewAction, CommonResult } from '@/interfaces'
 import { getLocaleText } from '@/util';
 
 export interface parameterStateProps {
     cardId: number,
+    actionId: number,
     visible: boolean,
     dirty: boolean,
     parameters: IParameter[],
@@ -22,6 +23,18 @@ export default {
     },
     reducers: {
         show(state: parameterStateProps, action: parameterStateProps) {
+            action.parameters.forEach(param => {
+                if (param.Field.Type == "datetime") {
+                    let sp = param.Default.split("||");
+                    let ofSp = sp.map(f => Offset2Datetime(f))
+                    param.Default = ofSp.join("||")
+                }
+                else if (param.Field.Type == "date") {
+                    let sp = param.Default.split("||");
+                    let ofSp = sp.map(f => Offset2Date(f))
+                    param.Default = ofSp.join("||")
+                }
+            })
             return {
                 cardId: action.cardId,
                 visible: true,
@@ -47,7 +60,39 @@ export default {
         },
     },
     effects: {
+        *load(action: parameterStateProps, handler: EffectsCommandMap) {
+            yield handler.put({ type: 'close' });
+            const data: CommonResult = yield handler.call(reqwest, {
+                url: '/api/parameter'
+                , type: 'json'
+                , method: 'post'
+                , data: { ActionId: action.actionId }
+            });
+            let params: IParameter[] = data.Data;
+            params.forEach(param => {
+                param.Field.Text = getLocaleText(param.Field.Locale)
+            })
+            if (data.Success) {
+                yield handler.put({
+                    type: 'show',
+                    parameters: data.Data,
+                    cardId: action.cardId,
+                });
+            }
+        },
         *saveParameter(action: parameterStateProps, handler: EffectsCommandMap) {
+            action.parameters.forEach(param => {
+                if (param.Field.Type == "datetime") {
+                    let sp = param.Default.split("||");
+                    let ofSp = sp.map(f => Datetime2Offset(f))
+                    param.Default = ofSp.join("||")
+                }
+                else if (param.Field.Type == "date") {
+                    let sp = param.Default.split("||");
+                    let ofSp = sp.map(f => Date2Offset(f))
+                    param.Default = ofSp.join("||")
+                }
+            })
             const data = yield handler.call(reqwest, {
                 url: '/api/parameter/update'
                 , type: 'json'

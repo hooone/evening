@@ -20,13 +20,13 @@ export default {
     namespace: 'fieldList',
     state: {
         cardId: 0,
-        fieldList: []
+        fields: [],
     },
     reducers: {
         show(state: fieldListStateProps, action: fieldListStateProps) {
             return {
                 cardId: action.cardId,
-                fieldList: action.fields,
+                fields: action.fields,
             }
         },
     },

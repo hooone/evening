@@ -4,8 +4,8 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"github.com/hooone/evening/pkg/infra/log"
-	"github.com/hooone/evening/pkg/models"
+	"github.com/hooone/evening/pkg/api/dtos"
+	"github.com/hooone/evening/pkg/log"
 	"github.com/hooone/evening/pkg/setting"
 	macaron "gopkg.in/macaron.v1"
 )
@@ -31,12 +31,12 @@ type CommonResult struct {
 
 //Response interface for WriteTo function
 type Response interface {
-	WriteTo(ctx *models.ReqContext)
+	WriteTo(ctx *dtos.ReqContext)
 }
 
 //Wrap convert action to macaron.Handler
 func Wrap(action interface{}) macaron.Handler {
-	return func(c *models.ReqContext) {
+	return func(c *dtos.ReqContext) {
 		var res Response
 		val, err := c.Invoke(action)
 
@@ -66,7 +66,7 @@ func (r *NormalResponse) Header(key, value string) *NormalResponse {
 }
 
 //WriteTo use for write return code to http response
-func (r *NormalResponse) WriteTo(ctx *models.ReqContext) {
+func (r *NormalResponse) WriteTo(ctx *dtos.ReqContext) {
 	if r.err != nil {
 		logger := log.New("context")
 		logger.Error(r.errMessage, "error", r.err)

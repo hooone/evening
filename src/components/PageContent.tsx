@@ -1,11 +1,12 @@
 import React, { InputHTMLAttributes, ReactElement } from 'react';
 import { Table, Popconfirm, Button, Row, Col, Layout } from 'antd';
-import { connect, getDvaApp } from 'umi';
+import { connect, useIntl } from 'umi';
 import { DispatchProp } from 'react-redux';
 import DataCard from '@/components/DataCard';
 import { Component } from 'react';
 import { IPage, ICard } from '@/interfaces'
 import { IStore } from '@/store'
+import { FrownTwoTone } from '@ant-design/icons';
 
 const { Content, Header, Sider } = Layout;
 
@@ -28,6 +29,46 @@ interface rootCfg {
 }
 
 const PageContent = (props: PageProps) => {
+    const intl = useIntl();
+    if (!props.page.Name) {
+        return (<Content style={{ margin: '0 16px', paddingBottom: '100px' }}
+            data-contextmenu="content"  >
+            <div style={{ position: 'relative', height: '100%' }}>
+                <div style={{
+                    overflow: 'auto',
+                    height: '300px',
+                    width: '300px',
+                    position: 'absolute',
+                    margin: 'auto',
+                    top: '0',
+                    bottom: '0',
+                    left: '0',
+                    right: '0',
+                    verticalAlign: 'middle',
+                    fontSize: '60px',
+                }}>
+                    <FrownTwoTone />
+                    <span>&nbsp;&nbsp;404</span>
+                    <div style={{ fontSize: '32px', color: 'gray' }}>{intl.formatMessage(
+                        {
+                            id: 'm404',
+                        }
+                    )}
+                    </div>
+                </div>
+            </div>
+        </Content>)
+    }
+    if (props.page.Cards.length == 0) {
+        return <Content style={{ margin: '0 16px', paddingBottom: '100px' }}
+            data-contextmenu="content" data-pageid={props.page.Id} data-pagename={props.page.Name} >
+            {intl.formatMessage(
+                {
+                    id: 'tocreatecard',
+                }
+            )}
+        </Content>
+    }
     let root: rootCfg = {
         Rows: [{
             Id: 0,
@@ -96,14 +137,10 @@ const PageContent = (props: PageProps) => {
             contents.push(<Row key={"row_" + row.Id} >{cols}</Row>)
         }
     )
-    return ((props.page.Name) ? (<Content style={{ margin: '0 16px', paddingBottom: '100px' }}
+    return <Content style={{ margin: '0 16px', paddingBottom: '100px' }}
         data-contextmenu="content" data-pageid={props.page.Id} data-pagename={props.page.Name} >
         {contents}
-    </Content>) : (<Content style={{ margin: '0 16px', paddingBottom: '100px' }}
-        data-contextmenu="content"  >
-        404
-    </Content>)
-    )
+    </Content>
 };
 
 export default connect((state: IStore) => {

@@ -15,7 +15,6 @@ interface NavProps extends DispatchProp {
 }
 
 const Navigation = (props: NavProps) => {
-    console.log("nav render")
     function onCollapse() {
         let onCollapse: ICollapseCommand = {
             type: 'nav/onCollapse',

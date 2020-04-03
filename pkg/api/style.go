@@ -2,33 +2,33 @@ package api
 
 import (
 	"encoding/json"
+	"fmt"
 
 	"github.com/hooone/evening/pkg/api/dtos"
-	"github.com/hooone/evening/pkg/bus"
-	"github.com/hooone/evening/pkg/models"
+	"github.com/hooone/evening/pkg/services/style"
 )
 
 //UpdateStyles 更新Style
-func UpdateStyles(c *models.ReqContext, form dtos.UpdateStylesForm) Response {
-	styles := make([]models.Style, 0)
-	errJSON := json.Unmarshal([]byte(form.Data), &styles)
-	if errJSON != nil {
-		result := new(CommonResult)
+func (hs *HTTPServer) UpdateStyles(c *dtos.ReqContext, form dtos.UpdateStylesForm, lang dtos.LocaleForm) Response {
+	result := new(CommonResult)
+	styles := make([]style.Style, 0)
+	errJson := json.Unmarshal([]byte(form.Data), &styles)
+	if errJson != nil {
+		result.Message = fmt.Sprintf("%s", errJson)
 		result.Success = false
 		return JSON(200, result)
 	}
-	for _, st := range styles {
-		cmd := models.UpdateStyleCommand{
-			Id:      st.Id,
-			FieldId: st.FieldId,
-			Value:   st.Value,
-		}
-		if err := bus.Dispatch(&cmd); err != nil {
-			return Error(500, "Failed to update styles", err)
+
+	for _, styleT := range styles {
+		err := hs.StyleService.UpdateStyles(styleT, c.OrgId, lang.Language)
+		if err != nil {
+			result.Data = 1
+			result.Message = fmt.Sprintf("%s", err)
+			result.Success = false
+			return JSON(200, result)
 		}
 	}
-	result := new(CommonResult)
-	result.Data = len(styles)
+	result.Data = 0
 	result.Success = true
 	return JSON(200, result)
 }

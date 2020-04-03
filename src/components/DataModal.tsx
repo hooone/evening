@@ -1,13 +1,15 @@
 import React, { InputHTMLAttributes, ReactElement } from 'react';
-import { Modal, Button, Form, InputNumber, Input, Select } from 'antd';
+import { Modal, Button, Form, InputNumber, Input, Select, DatePicker } from 'antd';
 import { connect, useIntl, getLocale, Dispatch } from 'umi';
-import { getLocaleText, getInputValue } from '@/util'
+import { getLocaleText, getInputValue, Offset2Datetime, Offset2Date } from '@/util'
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import { DispatchProp } from 'react-redux';
 import { IStore } from '@/store'
 import { modalStateProps, ICancelCommand, IHandleOkCommand } from '@/models/modal'
+import moment from 'moment';
 const { confirm } = Modal;
 const { Option } = Select;
+moment.locale('en');
 
 interface ModalProps extends DispatchProp {
     modal: modalStateProps,
@@ -50,42 +52,29 @@ const DataModal = (props: ModalProps) => {
                         let v = getInputValue('param_' + idx)
                         formdata[paName] = v && v.toUpperCase() === 'TRUE'
                     }
-                    // else if (parameter.Field.Type === "datetime") {
-                    //     formdata[paName] = new DataMethods().Offset2Datetime(inputValue('param_' + idx));
-                    // }
-                    // else if (parameter.Field.Type === "date") {
-                    //     formdata[paName] = new DataMethods().Offset2Date(inputValue('param_' + idx));
-                    // }
+                    else if (parameter.Field.Type === "datetime") {
+                        formdata[paName] = Offset2Datetime(getInputValue('param_' + idx));
+                    }
+                    else if (parameter.Field.Type === "date") {
+                        formdata[paName] = Offset2Date(getInputValue('param_' + idx));
+                    }
                     else {
                         formdata[paName] = getInputValue('param_' + idx)
                     }
                 }
                 else {
-                    // if (parameter.Field.Type === "datetime") {
-                    //     formdata[paName] = new DataMethods().Offset2Datetime(this.state.record[paName]);
-                    // }
-                    // else if (parameter.Field.Type === "date") {
-                    //     formdata[paName] = new DataMethods().Offset2Date(this.state.record[paName]);
-                    // }
-                    // else 
-                    {
+                    if (parameter.Field.Type === "datetime") {
+                        formdata[paName] = Offset2Datetime(props.modal.record[paName]);
+                    }
+                    else if (parameter.Field.Type === "date") {
+                        formdata[paName] = Offset2Date(props.modal.record[paName]);
+                    }
+                    else {
                         formdata[paName] = props.modal.record[paName]
                     }
                 }
             }
         )
-        // let action = this.state.action
-        // action.Parameters.forEach(
-        //     parameter => {
-        //         parameter.Default = formdata[parameter.Field.Name]
-        //     }
-        // )
-        // this.setState({
-        //     confirmLoading: true,
-        //     record: formdata,
-        //     action: action
-        // })
-
         if (props.modal.action.DoubleCheck) {
 
             confirm({
@@ -142,16 +131,21 @@ const DataModal = (props: ModalProps) => {
     props.modal.action.Parameters.forEach(
         (parameter, idx) => {
             let value = parameter.Default;
+            if (parameter.Default === "") {
+                if (parameter.Field.Type === "int") {
+                    value = "0";
+                }
+            }
             if (props.modal.action.Type === "UPDATE" || props.modal.action.Type === "DELETE") {
                 value = props.modal.record[parameter.Field.Name];
             }
             else {
-                // if (parameter.Field.Type === "datetime") {
-                //     value = new DataMethods().Offset2Datetime(value);
-                // }
-                // else if (parameter.Field.Type === "date") {
-                //     value = new DataMethods().Offset2Date(value);
-                // }
+                if (parameter.Field.Type === "datetime") {
+                    value = Offset2Datetime(value);
+                }
+                else if (parameter.Field.Type === "date") {
+                    value = Offset2Date(value);
+                }
             }
             if (parameter.IsVisible || parameter.IsEditable) {
                 let label = (<span>
@@ -175,32 +169,32 @@ const DataModal = (props: ModalProps) => {
                 if (parameter.Field.Type === 'int') {
                     formitems.push(
                         <Form.Item label={label} key={'paramItem_' + idx} style={{ marginBottom: '22px' }}>
-                            <InputNumber id={'param_' + idx} key={'param_' + idx + '_' + rd}
+                            <InputNumber className={'param_' + idx} key={'param_' + idx + '_' + rd}
                                 style={{ width: '100%' }} defaultValue={parseInt(value)} disabled={!(parameter.IsEditable)} />
                         </ Form.Item>
                     )
                 }
-                // else if (parameter.Field.Type === 'datetime') {
-                //     formitems.push(
-                //         <Form.Item label={label} key={'paramItem_' + idx} style={{ marginBottom: '22px' }}>
-                //             <DatePicker showTime id={'param_' + idx} key={'param_' + idx + '_' + rd} style={{ width: '100%' }}
-                //                 defaultValue={moment(value, datetimeFormat)} format={datetimeFormat} disabled={!(parameter.IsEditable)}
-                //             />
-                //         </Form.Item>
-                //     )
-                // }
-                // else if (parameter.Field.Type === 'date') {
-                //     formitems.push(
-                //         <Form.Item label={label} key={'paramItem_' + idx} style={{ marginBottom: '22px' }}>
-                //             <DatePicker id={'param_' + idx} key={'param_' + idx + '_' + rd} style={{ width: '100%' }}
-                //                 defaultValue={moment(value, dateFormat)} format={dateFormat} disabled={!(parameter.IsEditable)} />
-                //         </Form.Item>
-                //     )
-                // }
+                else if (parameter.Field.Type === 'datetime') {
+                    formitems.push(
+                        <Form.Item label={label} key={'paramItem_' + idx} style={{ marginBottom: '22px' }}>
+                            <DatePicker className={'param_' + idx} key={'param_' + idx + '_' + rd} style={{ width: '100%' }} showTime
+                                defaultValue={moment(value, datetimeFormat)} format={datetimeFormat} disabled={!(parameter.IsEditable)}
+                            />
+                        </Form.Item>
+                    )
+                }
+                else if (parameter.Field.Type === 'date') {
+                    formitems.push(
+                        <Form.Item label={label} key={'paramItem_' + idx} style={{ marginBottom: '22px' }}>
+                            <DatePicker className={'param_' + idx} key={'param_' + idx + '_' + rd} style={{ width: '100%' }}
+                                defaultValue={moment(value, dateFormat)} format={dateFormat} disabled={!(parameter.IsEditable)} />
+                        </Form.Item>
+                    )
+                }
                 else if (parameter.Field.Type === 'bool') {
                     formitems.push(
                         <Form.Item label={label} key={'paramItem_' + idx} style={{ marginBottom: '22px' }}>
-                            <Select id={'param_' + idx} key={'param_' + idx + '_' + rd}
+                            <Select className={'param_' + idx} key={'param_' + idx + '_' + rd}
                                 disabled={!(parameter.IsEditable)}
                                 defaultValue={value + ''} data-value={value + ''} style={{ width: '100%' }}
                                 onChange={(value) => onChange('param_' + idx, value)}>
@@ -221,7 +215,7 @@ const DataModal = (props: ModalProps) => {
                 else {
                     formitems.push(
                         <Form.Item label={label} key={'paramItem_' + idx} style={{ marginBottom: '22px' }}>
-                            <Input id={'param_' + idx} key={'param_' + idx + '_' + rd} defaultValue={value}
+                            <Input className={'param_' + idx} key={'param_' + idx + '_' + rd} defaultValue={value}
                                 disabled={!(parameter.IsEditable)} />
                         </Form.Item>
                     )

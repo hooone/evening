@@ -9,7 +9,7 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/hooone/evening/pkg/infra/log"
+	"github.com/hooone/evening/pkg/log"
 	"github.com/hooone/evening/pkg/setting"
 )
 

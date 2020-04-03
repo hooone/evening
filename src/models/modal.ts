@@ -1,5 +1,5 @@
 import { message } from 'antd'
-import { getLocale } from 'umi';
+import { getLocale, history } from 'umi';
 import reqwest from 'reqwest'
 import { EffectsCommandMap } from 'dva'
 import { IViewAction } from '@/interfaces';
@@ -129,6 +129,10 @@ export default {
                         yield handler.put({
                             type: 'nav/loadNav',
                         });
+                        if (data.Data) {
+                            history.push(data.Data)
+                        }
+
                     }
                     else if (action.action.Type === "CARD") {
                         yield handler.put({

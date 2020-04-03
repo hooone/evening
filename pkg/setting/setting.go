@@ -12,7 +12,7 @@ import (
 	"runtime"
 	"strings"
 
-	"github.com/hooone/evening/pkg/infra/log"
+	"github.com/hooone/evening/pkg/log"
 	ini "gopkg.in/ini.v1"
 )
 

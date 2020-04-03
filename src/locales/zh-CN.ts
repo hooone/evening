@@ -10,7 +10,7 @@ const zh_CN = {
     update: "修改",
     delete: "删除",
     style: "样式",
-    cardorder: "卡片顺序",
+    cardorder: "窗体顺序",
     actionparam: "参数",
     chart: "图表",
     table: "表格",
@@ -79,7 +79,12 @@ const zh_CN = {
     umi_generate: "umi完整版",
     evening_build: "编译版",
     TABLE: "表格",
-    RECT: "柱状图-折线图",
+    RECT:  "折线-柱状图",
+    tocreatecard:"点击右键添加窗体",
+    m404:"页面不存在",
+    loginfailed:"登录失败，请检查用户名和密码",
+    username:"用户名",
+    password:"密码",
 
 }
 export default zh_CN;

@@ -24,6 +24,7 @@ export interface IPage {
 }
 export interface ICard {
     Id: number,
+    PageId: number,
     Name: string,
     Text: string,
     Width: number,

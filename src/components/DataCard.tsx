@@ -28,6 +28,20 @@ const DataCard = (props: DataCardProps) => {
         }
         props.dispatch(loadDraw);
     }
+    props.card.Reader.Text = intl.formatMessage(
+        {
+            id: 'read',
+        }
+    )
+    props.card.Reader.Locale = {
+        "zh-CN": '',
+        "en-US": '',
+        Default: intl.formatMessage(
+            {
+                id: 'read',
+            }
+        )
+    }
     function handleAction(action: IViewAction, record: any) {
         //生成record  
         if (action.Type === "CREATE" || action.Type === "READ") {

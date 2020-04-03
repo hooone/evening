@@ -3,7 +3,6 @@ import { Row, Col, Form, Input, Select, Button } from 'antd';
 import { connect, useIntl } from 'umi';
 import { DispatchProp } from 'react-redux';
 import { IModal, IViewAction } from '@/interfaces'
-import { getLocaleText, getInputValue } from '@/util'
 import { actionInfoStateProps } from '@/models/actionInfoConfig'
 import { IStore } from '@/store'
 const { Option } = Select;
@@ -62,24 +61,6 @@ const ActionInfo = (props: ActionInfoProps) => {
                         })}</Option>
                         <Option value="DELETE">{intl.formatMessage({
                             id: 'delete',
-                        })}</Option>
-                        <Option value="IMPORT">{intl.formatMessage({
-                            id: 'import',
-                        })}</Option>
-                        <Option value="EXPORT">{intl.formatMessage({
-                            id: 'export',
-                        })}</Option>
-                        <Option value="SELECTIMPORT">{intl.formatMessage({
-                            id: 'importselected',
-                        })}</Option>
-                        <Option value="SELECTEXPORT">{intl.formatMessage({
-                            id: 'exportselected',
-                        })}</Option>
-                        <Option value="MULTIUPDATE">{intl.formatMessage({
-                            id: 'batchupdate',
-                        })}</Option>
-                        <Option value="MULTIEXPORT">{intl.formatMessage({
-                            id: 'batchexport',
                         })}</Option>
                     </Select>
                 </Form.Item>

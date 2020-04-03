@@ -102,7 +102,7 @@ export default {
                     Data: JSON.stringify(action.Styles)
                 }
             });
-            if (data.Data === 3) {
+            if (data.Data === 0) {
                 yield handler.put({ type: 'save' });
             }
 

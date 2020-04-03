@@ -2,24 +2,25 @@ package api
 
 import (
 	"encoding/json"
+	"errors"
 	"strconv"
+	"strings"
+	"time"
 
 	"github.com/hooone/evening/pkg/api/dtos"
 	"github.com/hooone/evening/pkg/bus"
-	"github.com/hooone/evening/pkg/models"
+	dataMg "github.com/hooone/evening/pkg/managers/data"
+	paramSvr "github.com/hooone/evening/pkg/services/parameter"
 )
 
 //ReadTestData 获取表单的测试数据
-func ReadTestData(c *models.ReqContext, form dtos.ReadTestDataForm) Response {
-	fQuery := models.GetFieldsQuery{CardId: form.CardId}
-	if err := bus.Dispatch(&fQuery); err != nil {
-		return Error(500, "Failed to get fields", err)
-	}
+func (hs *HTTPServer) ReadTestData(c *dtos.ReqContext, form dtos.ReadTestDataForm, lang dtos.LocaleForm) Response {
+	fds, _ := hs.FieldService.GetFields(form.CardId, c.OrgId, lang.Language)
 	//get parameters
-	Parameters := make([]*models.Parameter, 0)
-	for _, fd := range fQuery.Result {
+	Parameters := make([]*paramSvr.Parameter, 0)
+	for _, fd := range fds {
 		if fd.Filter == "EQUAL" {
-			param := models.Parameter{
+			param := paramSvr.Parameter{
 				FieldId:    fd.Id,
 				IsVisible:  fd.IsVisible,
 				IsEditable: fd.IsVisible,
@@ -29,7 +30,7 @@ func ReadTestData(c *models.ReqContext, form dtos.ReadTestDataForm) Response {
 			}
 			Parameters = append(Parameters, &param)
 		} else if fd.Filter == "MAX" {
-			param := models.Parameter{
+			param := paramSvr.Parameter{
 				FieldId:    fd.Id,
 				IsVisible:  fd.IsVisible,
 				IsEditable: fd.IsVisible,
@@ -39,7 +40,7 @@ func ReadTestData(c *models.ReqContext, form dtos.ReadTestDataForm) Response {
 			}
 			Parameters = append(Parameters, &param)
 		} else if fd.Filter == "MIN" {
-			param := models.Parameter{
+			param := paramSvr.Parameter{
 				FieldId:    fd.Id,
 				IsVisible:  fd.IsVisible,
 				IsEditable: fd.IsVisible,
@@ -49,7 +50,7 @@ func ReadTestData(c *models.ReqContext, form dtos.ReadTestDataForm) Response {
 			}
 			Parameters = append(Parameters, &param)
 		} else if fd.Filter == "RANGE" {
-			param2 := models.Parameter{
+			param2 := paramSvr.Parameter{
 				FieldId:    fd.Id,
 				IsVisible:  fd.IsVisible,
 				IsEditable: fd.IsVisible,
@@ -58,7 +59,7 @@ func ReadTestData(c *models.ReqContext, form dtos.ReadTestDataForm) Response {
 				Field:      fd,
 			}
 			Parameters = append(Parameters, &param2)
-			param := models.Parameter{
+			param := paramSvr.Parameter{
 				FieldId:    fd.Id,
 				IsVisible:  fd.IsVisible,
 				IsEditable: fd.IsVisible,
@@ -73,7 +74,7 @@ func ReadTestData(c *models.ReqContext, form dtos.ReadTestDataForm) Response {
 		param.Value = c.Query("param" + strconv.Itoa(idx))
 	}
 	//get data
-	query := models.GetTestDataQuery{
+	query := dataMg.GetTestDataQuery{
 		CardId: form.CardId,
 	}
 	if err := bus.Dispatch(&query); err != nil {
@@ -88,7 +89,7 @@ func ReadTestData(c *models.ReqContext, form dtos.ReadTestDataForm) Response {
 		for _, para := range Parameters {
 			_, ok := m[para.Field.Name]
 			if ok {
-				match = match && models.Compare(para.Compare, para.Field.Type, m[para.Field.Name], para.Value)
+				match = match && compare(para.Compare, para.Field.Type, m[para.Field.Name], para.Value)
 			} else {
 				match = false
 			}
@@ -108,23 +109,20 @@ func ReadTestData(c *models.ReqContext, form dtos.ReadTestDataForm) Response {
 	return JSON(200, result)
 }
 
-func CreateTestData(c *models.ReqContext, form dtos.CreateTestDataForm) Response {
+func (hs *HTTPServer) CreateTestData(c *dtos.ReqContext, form dtos.CreateTestDataForm, lang dtos.LocaleForm) Response {
 	//get parameters
-	query := models.GetParametersQuery{ActionId: form.ActionId}
-	if err := bus.Dispatch(&query); err != nil {
-		return Error(500, "Failed to get paramters", err)
-	}
+	pas, _ := hs.ParameterService.GetParameters(form.ActionId, c.OrgId, lang.Language)
 
 	//get form data
 	mp := make(map[string]interface{})
-	for _, parm := range query.Result {
+	for _, parm := range pas {
 		pvalue := c.Query(parm.Field.Name)
 		mp[parm.Field.Name] = pvalue
 	}
 	data, _ := json.Marshal(mp)
 
 	//insert data
-	cmd := models.InsertTestDataCommand{
+	cmd := dataMg.InsertTestDataCommand{
 		CardId: form.CardId,
 		Value:  string(data),
 	}
@@ -138,23 +136,20 @@ func CreateTestData(c *models.ReqContext, form dtos.CreateTestDataForm) Response
 	return JSON(200, result)
 }
 
-func UpdateTestData(c *models.ReqContext, form dtos.UpdateTestDataForm) Response {
+func (hs *HTTPServer) UpdateTestData(c *dtos.ReqContext, form dtos.UpdateTestDataForm, lang dtos.LocaleForm) Response {
 	//get parameters
-	query := models.GetParametersQuery{ActionId: form.ActionId}
-	if err := bus.Dispatch(&query); err != nil {
-		return Error(500, "Failed to get paramters", err)
-	}
+	pas, _ := hs.ParameterService.GetParameters(form.ActionId, c.OrgId, lang.Language)
 
 	//get form data
 	mp := make(map[string]interface{})
-	for _, parm := range query.Result {
+	for _, parm := range pas {
 		pvalue := c.Query(parm.Field.Name)
 		mp[parm.Field.Name] = pvalue
 	}
 	data, _ := json.Marshal(mp)
 
 	//update data
-	cmd := models.UpdateTestDataCommand{
+	cmd := dataMg.UpdateTestDataCommand{
 		Key:   form.Key,
 		Value: string(data),
 	}
@@ -168,8 +163,8 @@ func UpdateTestData(c *models.ReqContext, form dtos.UpdateTestDataForm) Response
 	return JSON(200, result)
 }
 
-func DeleteTestData(c *models.ReqContext, form dtos.DeleteTestDataForm) Response {
-	cmd := models.DeleteTestDataCommand{
+func DeleteTestData(c *dtos.ReqContext, form dtos.DeleteTestDataForm) Response {
+	cmd := dataMg.DeleteTestDataCommand{
 		Key: form.Key,
 	}
 	if err := bus.Dispatch(&cmd); err != nil {
@@ -180,4 +175,148 @@ func DeleteTestData(c *models.ReqContext, form dtos.DeleteTestDataForm) Response
 	result.Data = cmd.Result
 	result.Success = true
 	return JSON(200, result)
+}
+
+func Todatetime(in string) (out time.Time, err error) {
+	out, err = time.ParseInLocation("2006-01-02 15:04:05", in, time.Local)
+	return out, err
+}
+
+func toInt(in interface{}) (int64, error) {
+	switch in.(type) {
+	case float64:
+		return int64(in.(float64)), nil
+		break
+	case float32:
+		return int64(in.(float32)), nil
+		break
+	case int:
+		return int64(in.(int)), nil
+		break
+	case int64:
+		return in.(int64), nil
+		break
+	case string:
+		return strconv.ParseInt(in.(string), 10, 64)
+		break
+	default:
+		return 0, errors.New("type mismatch")
+		break
+	}
+	return 0, errors.New("type mismatch")
+}
+
+func toDateTime(in interface{}) (time.Time, error) {
+	switch in.(type) {
+	case string:
+		return Todatetime(in.(string))
+		break
+	default:
+		return time.Now(), errors.New("type mismatch")
+		break
+	}
+	return time.Now(), errors.New("type mismatch")
+}
+func toDate(in interface{}) (time.Time, error) {
+	switch in.(type) {
+	case string:
+		sp := strings.Split(in.(string), " ")
+		return Todatetime(sp[0] + " 00:00:00")
+		break
+	default:
+		return time.Now(), errors.New("type mismatch")
+		break
+	}
+	return time.Now(), errors.New("type mismatch")
+}
+func toString(in interface{}) (string, error) {
+	switch in.(type) {
+	case string:
+		return in.(string), nil
+		break
+	default:
+		return "", errors.New("type mismatch")
+		break
+	}
+	return "", errors.New("type mismatch")
+}
+func compare(operation string, typec string, left interface{}, right interface{}) bool {
+	if typec == "int" {
+		leftvalue, ok1 := toInt(left)
+		rightvalue, ok2 := toInt(right)
+		if ok1 != nil || ok2 != nil {
+			return true
+		}
+		if operation == "lt" {
+			return leftvalue < rightvalue
+		} else if operation == "le" {
+			return leftvalue <= rightvalue
+		} else if operation == "gt" {
+			return leftvalue > rightvalue
+		} else if operation == "ge" {
+			return leftvalue >= rightvalue
+		} else if operation == "eq" {
+			return leftvalue == rightvalue
+		} else if operation == "ne" {
+			return leftvalue != rightvalue
+		}
+	} else if typec == "datetime" {
+		leftvalue, ok1 := toDateTime(left)
+		rightvalue, ok2 := toDateTime(right)
+		if ok1 != nil || ok2 != nil {
+			return false
+		}
+		if operation == "lt" {
+			return leftvalue.UnixNano() < rightvalue.UnixNano()
+		} else if operation == "le" {
+			return leftvalue.UnixNano() <= rightvalue.UnixNano()
+		} else if operation == "gt" {
+			return leftvalue.UnixNano() > rightvalue.UnixNano()
+		} else if operation == "ge" {
+			return leftvalue.UnixNano() >= rightvalue.UnixNano()
+		} else if operation == "eq" {
+			return leftvalue.UnixNano() == rightvalue.UnixNano()
+		} else if operation == "ne" {
+			return leftvalue.UnixNano() != rightvalue.UnixNano()
+		}
+	} else if typec == "date" {
+		leftvalue, ok1 := toDate(left)
+		rightvalue, ok2 := toDate(right)
+		if ok1 != nil || ok2 != nil {
+			return false
+		}
+		if operation == "lt" {
+			return leftvalue.UnixNano() < rightvalue.UnixNano()
+		} else if operation == "le" {
+			return leftvalue.UnixNano() <= rightvalue.UnixNano()
+		} else if operation == "gt" {
+			return leftvalue.UnixNano() > rightvalue.UnixNano()
+		} else if operation == "ge" {
+			return leftvalue.UnixNano() >= rightvalue.UnixNano()
+		} else if operation == "eq" {
+			return leftvalue.UnixNano() == rightvalue.UnixNano()
+		} else if operation == "ne" {
+			return leftvalue.UnixNano() != rightvalue.UnixNano()
+		}
+	} else if typec == "string" {
+		leftvalue, ok1 := toString(left)
+		rightvalue, ok2 := toString(right)
+		if ok1 != nil || ok2 != nil {
+			return false
+		}
+		if operation == "lt" {
+			return strings.Index(leftvalue, rightvalue) >= 0
+		} else if operation == "le" {
+			return strings.Index(leftvalue, rightvalue) >= 0
+		} else if operation == "gt" {
+			return strings.Index(leftvalue, rightvalue) >= 0
+		} else if operation == "ge" {
+			return strings.Index(leftvalue, rightvalue) >= 0
+		} else if operation == "eq" {
+			return leftvalue == rightvalue
+		} else if operation == "ne" {
+			return leftvalue != rightvalue
+		}
+	}
+	return false
 }

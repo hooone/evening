@@ -30,17 +30,14 @@ export default {
             let pageName = ''
 
             let app = getDvaApp();
-            let pathname = action.Name
-            if (!pathname) {
-                pathname = app._history.location.pathname
-            }
+            let pathname = app._history.location.pathname
             let route = pathname.split('/')
-            route = route.filter((str) => str)
-            yield handler.put({ type: 'global/savePathName', PathName: pathname, });
+            route = route.filter((str:string) => str)
             pageName = route.pop() ?? ""
             if (!pageName) {
                 return;
             }
+            yield handler.put({ type: 'global/savePathName', PathName: pathname, });
             const data = yield handler.call(reqwest, {
                 url: '/api/card'
                 , type: 'json'
@@ -51,7 +48,8 @@ export default {
                 }
             });
             if (!data.Success) {
-                pageName = "";
+                yield handler.put({ type: 'savePage', Cards: [], Id: 0, Name: '' });
+                return;
             }
             cards = data.Data
             console.log(cards)

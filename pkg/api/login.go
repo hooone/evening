@@ -4,14 +4,13 @@ import (
 	"crypto/subtle"
 	"encoding/hex"
 	"errors"
-	"fmt"
 	"net/url"
 	"strings"
 
 	"github.com/hooone/evening/pkg/api/dtos"
+	"github.com/hooone/evening/pkg/api/middleware"
 	"github.com/hooone/evening/pkg/bus"
-	"github.com/hooone/evening/pkg/middleware"
-	"github.com/hooone/evening/pkg/models"
+	"github.com/hooone/evening/pkg/managers/user"
 	"github.com/hooone/evening/pkg/setting"
 	"github.com/hooone/evening/pkg/util"
 )
@@ -50,7 +49,7 @@ func (hs *HTTPServer) cookieOptionsFromCfg() middleware.CookieOptions {
 	}
 }
 
-func (hs *HTTPServer) LoginView(c *models.ReqContext) {
+func (hs *HTTPServer) LoginView(c *dtos.ReqContext) {
 	if _, ok := tryGetEncryptedCookie(c, LoginErrorCookieName); ok {
 		middleware.DeleteCookie(c.Resp, LoginErrorCookieName, hs.cookieOptionsFromCfg)
 		c.HTML(200, getViewIndex())
@@ -74,7 +73,7 @@ func (hs *HTTPServer) LoginView(c *models.ReqContext) {
 	}
 	c.HTML(200, getViewIndex())
 }
-func tryGetEncryptedCookie(ctx *models.ReqContext, cookieName string) (string, bool) {
+func tryGetEncryptedCookie(ctx *dtos.ReqContext, cookieName string) (string, bool) {
 	cookie := ctx.GetCookie(cookieName)
 	if cookie == "" {
 		return "", false
@@ -95,22 +94,21 @@ var validatePassword = func(providedPassword string, userPassword string, userSa
 		return err
 	}
 	if subtle.ConstantTimeCompare([]byte(passwordHashed), []byte(userPassword)) != 1 {
-		return models.ErrInvalidCredentials
+		return user.ErrInvalidCredentials
 	}
 
 	return nil
 }
 
-func (hs *HTTPServer) LoginPost(c *models.ReqContext, cmd dtos.LoginCommand) Response {
-	userQuery := &models.LoginUserQuery{
-		ReqContext: c,
-		Username:   cmd.User,
-		Password:   cmd.Password,
-		IpAddress:  c.Req.RemoteAddr,
+func (hs *HTTPServer) LoginPost(c *dtos.ReqContext, cmd dtos.LoginCommand) Response {
+	userQuery := &user.LoginUserQuery{
+		Username:  cmd.User,
+		Password:  cmd.Password,
+		IpAddress: c.Req.RemoteAddr,
 	}
 
 	if err := bus.Dispatch(userQuery); err != nil {
-		if err == models.ErrUserNotFound {
+		if err == user.ErrUserNotFound {
 			return Error(401, "Invalid username or password", err)
 		}
 		return Error(500, "Error while trying to authenticate user", err)
@@ -132,26 +130,22 @@ func (hs *HTTPServer) LoginPost(c *models.ReqContext, cmd dtos.LoginCommand) Res
 	return JSON(200, result)
 }
 
-func (hs *HTTPServer) Logout(c *models.ReqContext) {
-	fmt.Println("logout")
-	if err := hs.AuthTokenService.RevokeToken(c.Req.Context(), c.UserToken); err != nil && err != models.ErrUserTokenNotFound {
+func (hs *HTTPServer) Logout(c *dtos.ReqContext) {
+	if err := hs.AuthTokenService.RevokeToken(c.Req.Context(), c.UserToken); err != nil && err != user.ErrUserTokenNotFound {
 		hs.log.Error("failed to revoke auth token", "error", err)
 	}
 
-	fmt.Println("removetoken")
 	middleware.WriteSessionCookie(c, "", -1)
 
-	fmt.Println("writesession")
 	if setting.SignoutRedirectUrl != "" {
 		c.Redirect(setting.SignoutRedirectUrl)
 	} else {
 		hs.log.Info("Successful Logout", "User", c.Email)
-		fmt.Println("Redirect")
 		c.Redirect(setting.AppSubURL + "/login")
 	}
 }
 
-func (hs *HTTPServer) loginUserWithUser(user *models.User, c *models.ReqContext) {
+func (hs *HTTPServer) loginUserWithUser(user *user.User, c *dtos.ReqContext) {
 	if user == nil {
 		hs.log.Error("user login with nil user")
 	}
