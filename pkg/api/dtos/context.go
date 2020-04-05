@@ -14,7 +14,6 @@ type ReqContext struct {
 	*user.SignedInUser
 	UserToken *user.UserToken
 
-	Test       string
 	IsSignedIn bool
 	Logger     log.Logger
 }

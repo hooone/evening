@@ -4,6 +4,7 @@ export default defineConfig({
   routes: [
     { exact: true, path: '/', redirect: '/home' },
     { exact: false, path: '/login', component: '@/pages/login' },
+    { exact: false, path: '/signup', component: '@/pages/signup' },
     { exact: false, path: '/', component: '@/pages/index' },
   ],
   dva: {

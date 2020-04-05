@@ -41,13 +41,13 @@ func GetContextHandler(ats *auth.UserTokenService) macaron.Handler {
 
 		c.Map(ctx)
 
-		// 超时登出
-		// if ctx.ShouldUpdateLastSeenAt() {
-		// 	ctx.Logger.Debug("Updating last user_seen_at", "user_id", ctx.UserId)
-		// 	if err := bus.Dispatch(&user.UpdateUserLastSeenAtCommand{UserId: ctx.UserId}); err != nil {
-		// 		ctx.Logger.Error("Failed to update last_seen_at", "error", err)
-		// 	}
-		// }
+		// update last seen every 5min
+		if ctx.ShouldUpdateLastSeenAt() {
+			ctx.Logger.Debug("Updating last user_seen_at", "user_id", ctx.SignedInUser.Id)
+			if err := bus.Dispatch(&user.UpdateUserLastSeenAtCommand{UserId: ctx.SignedInUser.Id}); err != nil {
+				ctx.Logger.Error("Failed to update last_seen_at", "error", err)
+			}
+		}
 	}
 }
 
@@ -85,41 +85,10 @@ func initContextWithToken(
 
 	ctx.SignedInUser = query.Result
 	ctx.IsSignedIn = true
-	ctx.Test = "AABBCC"
 	ctx.UserToken = token
-
-	// Rotate the token just before we write response headers to ensure there is no delay between
-	// the new token being generated and the client receiving it.
-	// ctx.Resp.Before(rotateEndOfRequestFunc(ctx, authTokenService, token))
 
 	return true
 }
-
-//token超时后自动生成
-// func rotateEndOfRequestFunc(ctx *dtos.ReqContext, authTokenService user.UserTokenService, token *user.UserToken) macaron.BeforeFunc {
-// 	return func(w macaron.ResponseWriter) {
-// 		// // if response has already been written, skip.
-// 		// if w.Written() {
-// 		// 	return
-// 		// }
-
-// 		// // if the request is cancelled by the client we should not try
-// 		// // to rotate the token since the client would not accept any result.
-// 		// if ctx.Context.Req.Context().Err() == context.Canceled {
-// 		// 	return
-// 		// }
-
-// 		// rotated, err := authTokenService.TryRotateToken(ctx.Req.Context(), token, ctx.RemoteAddr(), ctx.Req.UserAgent())
-// 		// if err != nil {
-// 		// 	ctx.Logger.Error("Failed to rotate token", "error", err)
-// 		// 	return
-// 		// }
-
-// 		// if rotated {
-// 		// 	WriteSessionCookie(ctx, token.UnhashedToken, setting.LoginMaxLifetimeDays)
-// 		// }
-// 	}
-// }
 
 func WriteSessionCookie(ctx *dtos.ReqContext, value string, maxLifetimeDays int) {
 	if setting.Env == setting.DEV {

@@ -4,6 +4,7 @@ import (
 	"crypto/subtle"
 	"encoding/hex"
 	"errors"
+	"fmt"
 	"net/url"
 	"strings"
 
@@ -11,6 +12,7 @@ import (
 	"github.com/hooone/evening/pkg/api/middleware"
 	"github.com/hooone/evening/pkg/bus"
 	"github.com/hooone/evening/pkg/managers/user"
+	"github.com/hooone/evening/pkg/services/navigation"
 	"github.com/hooone/evening/pkg/setting"
 	"github.com/hooone/evening/pkg/util"
 )
@@ -156,4 +158,55 @@ func (hs *HTTPServer) loginUserWithUser(user *user.User, c *dtos.ReqContext) {
 	}
 	hs.log.Info("Successful Login", "User", user.Login)
 	middleware.WriteSessionCookie(c, userToken.UnhashedToken, hs.Cfg.LoginMaxLifetimeDays)
+}
+
+func (hs *HTTPServer) SignUpStep2(c *dtos.ReqContext, form dtos.SignUpStep2Form) Response {
+	createUserCmd := user.CreateUserCommand{
+		Email:    form.Username,
+		Login:    form.Username,
+		Name:     form.Username,
+		Password: form.Password,
+	}
+	result := new(CommonResult)
+
+	if len(form.Password) < 4 {
+		result.Data = 1
+		result.Message = "Password is missing or too short"
+		result.Success = false
+		return JSON(200, result)
+	}
+
+	// check if user exists
+	existing := user.GetSignedInUserQuery{Login: form.Username}
+	if err := bus.Dispatch(&existing); err == nil {
+		result.Data = 1
+		result.Message = "User with same username address already exists"
+		result.Success = false
+		return JSON(200, result)
+	}
+
+	// dispatch create command
+	if err := bus.Dispatch(&createUserCmd); err != nil {
+		result.Data = 2
+		result.Message = fmt.Sprintf("%s", err)
+		result.Success = false
+		return JSON(200, result)
+	}
+
+	if err := hs.NavigationService.CreateTreePage(navigation.Page{
+		Name: "home",
+		Text: "主页",
+	}, createUserCmd.Result.OrgId, "zh-CN"); err != nil {
+		result.Data = 3
+		result.Message = fmt.Sprintf("%s", err)
+		result.Success = false
+		return JSON(200, result)
+	}
+
+	user := &createUserCmd.Result
+	hs.loginUserWithUser(user, c)
+
+	result.Data = 0
+	result.Success = true
+	return JSON(200, result)
 }

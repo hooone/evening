@@ -15,6 +15,8 @@ func (hs *HTTPServer) registerRoutes() {
 	r.Get("/logout", hs.Logout)
 	r.Post("/login", bind(dtos.LoginCommand{}), Wrap(hs.LoginPost))
 	r.Get("/login", hs.LoginView)
+	r.Get("/signup", hs.LoginView)
+	r.Post("/api/signup", bind(dtos.SignUpStep2Form{}), Wrap(hs.SignUpStep2))
 
 	r.Group("/api/navigation", func(navRoute routing.RouteRegister) {
 		navRoute.Get("/", bind(dtos.LocaleForm{}), Wrap(hs.GetNavigation))

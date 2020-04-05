@@ -84,5 +84,12 @@ const en_US = {
     loginfailed:"login failed",
     username:"username",
     password:"password",
+    remember:"remember",
+    register:"register",
+    login:"login",
+    signup:"signup",
+    backlogin:"back to login",
+    passwordrepeat:"Please input the password again ",
+    passwordnotequal:"The two passwords are not the same, please confirm",
 }
 export default en_US; 

@@ -17,8 +17,6 @@ require (
 	github.com/go-xorm/core v0.6.2
 	github.com/go-xorm/xorm v0.7.1
 	github.com/gosimple/slug v1.9.0 // indirect
-	github.com/grafana/grafana v6.1.6+incompatible // indirect
-	github.com/hooone/grafana v5.4.5+incompatible // indirect
 	github.com/inconshreveable/log15 v0.0.0-20200109203555-b30bc20e4fd1
 	github.com/kr/pretty v0.2.0 // indirect
 	github.com/lib/pq v1.3.0

@@ -37,8 +37,9 @@ type User struct {
 	IsAdmin bool
 	OrgId   int64
 
-	Created time.Time
-	Updated time.Time
+	LastSeenAt time.Time
+	Created    time.Time
+	Updated    time.Time
 }
 
 type SignedInUser struct {
@@ -47,6 +48,7 @@ type SignedInUser struct {
 	Login       string
 	Name        string
 	Email       string
+	LastSeenAt  time.Time
 	IsAnonymous bool    `xorm:"-"`
 	Teams       []int64 `xorm:"-"`
 }

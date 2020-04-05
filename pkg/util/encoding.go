@@ -18,6 +18,22 @@ func RandomHex(n int) (string, error) {
 	}
 	return hex.EncodeToString(bytes), nil
 }
+func GetRandomString(n int, alphabets ...byte) (string, error) {
+	const alphanum = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
+	var bytes = make([]byte, n)
+	if _, err := rand.Read(bytes); err != nil {
+		return "", err
+	}
+
+	for i, b := range bytes {
+		if len(alphabets) == 0 {
+			bytes[i] = alphanum[b%byte(len(alphanum))]
+		} else {
+			bytes[i] = alphabets[b%byte(len(alphabets))]
+		}
+	}
+	return string(bytes), nil
+}
 
 // EncodePassword encodes a password using PBKDF2.
 func EncodePassword(password string, salt string) (string, error) {

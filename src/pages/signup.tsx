@@ -10,26 +10,34 @@ const { Title, Paragraph, Text } = Typography;
 const layout = {
   wrapperCol: { span: 24 },
 };
-const Login = () => {
+const SignUp = () => {
   const intl = useIntl();
   const onFinish = (values: Store) => {
+    if (values.passwordrepeat !== values.password) {
+      message.error(intl.formatMessage(
+        {
+          id: 'passwordnotequal',
+        }
+      ));
+      return;
+    }
     reqwest({
-      url: '/login',
+      url: '/api/signup',
       type: 'json',
       method: 'post',
       data: {
         User: values.username,
         Password: values.password,
       }
-      , error: function () {
-        message.error(intl.formatMessage(
-          {
-            id: 'loginfailed',
-          }
-        ));
+      , error: function (rst: CommonResult) {
+        message.error(rst.Message);
       }
-      , success: function (data: CommonResult) {
-        window.location.href = "/home"
+      , success: function (rst: CommonResult) {
+        if (rst.Success) {
+          window.location.href = "/home"
+        } else {
+          message.error(rst.Message);
+        }
       }
     })
   };
@@ -47,7 +55,7 @@ const Login = () => {
                 evening
             </Title>
               <Paragraph>
-                中后台数据管理网页快速开发工具
+                新用户注册
               </Paragraph>
             </Typography>
             <Form
@@ -59,6 +67,7 @@ const Login = () => {
             >
               <Form.Item
                 name="username"
+                style={{ marginBottom: 0 }}
                 rules={[{ required: true, message: 'Please input your username!' }]}
               >
                 <Input prefix={<UserOutlined />} placeholder={intl.formatMessage(
@@ -79,16 +88,24 @@ const Login = () => {
                   }
                 )} />
               </Form.Item>
+
+              <Form.Item
+                name="passwordrepeat"
+                style={{ marginBottom: 0 }}
+                rules={[{ required: true, message: 'Please input your password!' }]}
+              >
+                <Input.Password prefix={<LockOutlined />} placeholder={intl.formatMessage(
+                  {
+                    id: 'passwordrepeat',
+                  }
+                )} />
+              </Form.Item>
+
               <Form.Item name="remember" style={{ marginBottom: 0 }}>
                 <div>
-                  <Checkbox style={{ lineHeight: '32px' }}>{intl.formatMessage(
+                  <Button type="link" style={{ float: 'right' }} onClick={() => { history.push("/login") }}>{intl.formatMessage(
                     {
-                      id: 'remember',
-                    }
-                  )}</Checkbox>
-                  <Button type="link" style={{ float: 'right' }} onClick={() => { history.push("/signup") }}>{intl.formatMessage(
-                    {
-                      id: 'register',
+                      id: 'backlogin',
                     }
                   )}</Button>
                 </div>
@@ -98,7 +115,7 @@ const Login = () => {
                 <Button type="primary" htmlType="submit" style={{ width: "100%" }}>
                   {intl.formatMessage(
                     {
-                      id: 'login',
+                      id: 'signup',
                     }
                   )}
                 </Button>
@@ -111,4 +128,4 @@ const Login = () => {
   );
 };
 
-export default Login
+export default SignUp

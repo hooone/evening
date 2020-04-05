@@ -26,3 +26,20 @@ type GetSignedInUserQuery struct {
 	OrgId  int64
 	Result *SignedInUser
 }
+type UpdateUserLastSeenAtCommand struct {
+	UserId int64
+}
+type CreateUserCommand struct {
+	Email          string
+	Login          string
+	Name           string
+	Company        string
+	Password       string
+	EmailVerified  bool
+	IsAdmin        bool
+	IsDisabled     bool
+	SkipOrgSetup   bool
+	DefaultOrgRole string
+
+	Result User
+}

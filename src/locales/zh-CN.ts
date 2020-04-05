@@ -85,6 +85,12 @@ const zh_CN = {
     loginfailed:"登录失败，请检查用户名和密码",
     username:"用户名",
     password:"密码",
-
+    remember:"记住登录状态",
+    register:"注册账户",
+    login:"登录",
+    signup:"注册",
+    backlogin:"返回登录页面",
+    passwordrepeat:"请再输入一遍密码",
+    passwordnotequal:"两次输入的密码不一致，请确认",
 }
 export default zh_CN;
