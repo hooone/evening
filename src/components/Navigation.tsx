@@ -23,6 +23,21 @@ const Navigation = (props: NavProps) => {
     }
     function onDragStart(e: React.DragEvent) {
         let real = e.target as HTMLElement
+        if (real.tagName === "path") {
+            real = real.parentElement as HTMLElement
+        }
+        if (real.tagName === "svg") {
+            real = real.parentElement as HTMLElement
+        }
+        if (real.tagName === "I") {
+            real = real.parentElement as HTMLElement
+        }
+        if (real.tagName === "SPAN") {
+            real = real.parentElement as HTMLElement
+        }
+        if (real.tagName === "SPAN") {
+            real = real.parentElement as HTMLElement
+        }
         if (real.tagName === "A") {
             real = real.parentElement as HTMLElement
         }
@@ -127,9 +142,27 @@ const Navigation = (props: NavProps) => {
 
     }
     function onDragOver(e: React.DragEvent) {
-        let real = e.target as HTMLElement;
+        let real = e.target as HTMLElement
+        if (real.tagName === "path") {
+            real = real.parentElement as HTMLElement
+        }
+        if (real.tagName === "svg") {
+            real = real.parentElement as HTMLElement
+        }
+        if (real.tagName === "I") {
+            real = real.parentElement as HTMLElement
+        }
+        if (real.tagName === "SPAN") {
+            real = real.parentElement as HTMLElement
+        }
+        if (real.tagName === "SPAN") {
+            real = real.parentElement as HTMLElement
+        }
+        if (real.tagName === "SPAN") {
+            real = real.parentElement as HTMLElement
+        }
         if (real.tagName === "A") {
-            real = real.parentElement as HTMLElement;
+            real = real.parentElement as HTMLElement
         }
         if (real.tagName === "DIV" && real.classList.contains("ant-menu-submenu-title")) {
             if (e.clientY - real.offsetTop < real.clientHeight / 4) {
@@ -175,10 +208,30 @@ const Navigation = (props: NavProps) => {
         e.preventDefault()
     }
     function onDragEnter(e: React.DragEvent) {
-        let real = e.target as HTMLElement;
-        if (real.tagName === "A") {
-            real = real.parentElement as HTMLElement;
+        let real = e.target as HTMLElement
+        if (real.tagName === "path") {
+            real = real.parentElement as HTMLElement
         }
+        if (real.tagName === "svg") {
+            real = real.parentElement as HTMLElement
+        }
+        if (real.tagName === "I") {
+            real = real.parentElement as HTMLElement
+        }
+        if (real.tagName === "SPAN") {
+            real = real.parentElement as HTMLElement
+        }
+        if (real.tagName === "SPAN") {
+            real = real.parentElement as HTMLElement
+        }
+        if (real.tagName === "SPAN") {
+            real = real.parentElement as HTMLElement
+        }
+        if (real.tagName === "A") {
+            real = real.parentElement as HTMLElement
+        }
+        console.log("enter")
+        console.log(real.tagName)
         if (real.tagName === "DIV" && real.classList.contains("ant-menu-submenu-title")) {
             if (!real.classList.contains("dragEnter")) {
                 real.classList.add("dragEnter")
@@ -197,9 +250,24 @@ const Navigation = (props: NavProps) => {
         e.preventDefault()
     }
     function onDragLeave(e: React.DragEvent) {
-        let real = e.target as HTMLElement;
+        let real = e.target as HTMLElement
+        if (real.tagName === "path") {
+            real = real.parentElement as HTMLElement
+        }
+        if (real.tagName === "svg") {
+            real = real.parentElement as HTMLElement
+        }
+        if (real.tagName === "I") {
+            real = real.parentElement as HTMLElement
+        }
+        if (real.tagName === "SPAN") {
+            real = real.parentElement as HTMLElement
+        }
+        if (real.tagName === "SPAN") {
+            real = real.parentElement as HTMLElement
+        }
         if (real.tagName === "A") {
-            real = real.parentElement as HTMLElement;
+            real = real.parentElement as HTMLElement
         }
         if (real.tagName === "DIV" && real.classList.contains("ant-menu-submenu-title")) {
             real.classList.remove("dragEnter")

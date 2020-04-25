@@ -73,15 +73,26 @@ func (hs *HTTPServer) ReadTestData(c *dtos.ReqContext, form dtos.ReadTestDataFor
 	for idx, param := range Parameters {
 		param.Value = c.Query("param" + strconv.Itoa(idx))
 	}
-	//get data
-	query := dataMg.GetTestDataQuery{
-		CardId: form.CardId,
-	}
-	if err := bus.Dispatch(&query); err != nil {
+	data, err := getTestData(form.CardId, Parameters)
+	if err != nil {
 		return Error(500, "Failed to get fields", err)
 	}
-	//filter
+	result := new(CommonResult)
+	result.Data = data
+	result.Success = true
+	return JSON(200, result)
+}
+
+func getTestData(cardId int64, Parameters []*paramSvr.Parameter) ([]interface{}, error) {
 	data := make([]interface{}, 0)
+	//get data
+	query := dataMg.GetTestDataQuery{
+		CardId: cardId,
+	}
+	if err := bus.Dispatch(&query); err != nil {
+		return data, err
+	}
+	//filter
 	for _, p := range query.Result {
 		m := make(map[string]interface{})
 		json.Unmarshal([]byte(p.Value), &m)
@@ -102,11 +113,7 @@ func (hs *HTTPServer) ReadTestData(c *dtos.ReqContext, form dtos.ReadTestDataFor
 			data = append(data, mp)
 		}
 	}
-
-	result := new(CommonResult)
-	result.Data = data
-	result.Success = true
-	return JSON(200, result)
+	return data, nil
 }
 
 func (hs *HTTPServer) CreateTestData(c *dtos.ReqContext, form dtos.CreateTestDataForm, lang dtos.LocaleForm) Response {
@@ -211,6 +218,16 @@ func toDateTime(in interface{}) (time.Time, error) {
 	case string:
 		return Todatetime(in.(string))
 		break
+	case int64:
+		now := time.Now()
+		m := 0 - time.Duration(in.(int64)*int64(time.Millisecond))
+		return now.Add(m), nil
+		break
+	case int32:
+		now := time.Now()
+		m := 0 - time.Duration(int64(in.(int32))*int64(time.Millisecond))
+		return now.Add(m), nil
+		break
 	default:
 		return time.Now(), errors.New("type mismatch")
 		break
@@ -222,6 +239,16 @@ func toDate(in interface{}) (time.Time, error) {
 	case string:
 		sp := strings.Split(in.(string), " ")
 		return Todatetime(sp[0] + " 00:00:00")
+		break
+	case int64:
+		now := time.Now()
+		m := 0 - time.Duration(in.(int64)*int64(time.Millisecond))
+		return now.Add(m), nil
+		break
+	case int32:
+		now := time.Now()
+		m := 0 - time.Duration(int64(in.(int32))*int64(time.Millisecond))
+		return now.Add(m), nil
 		break
 	default:
 		return time.Now(), errors.New("type mismatch")

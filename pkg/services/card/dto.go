@@ -18,10 +18,11 @@ type Card struct {
 	Pos     int32
 	Width   int32
 	Style   string
-	Locale  locale.Locale        `xorm:"-"`
-	Fields  []*field.Field       `xorm:"-"`
-	Actions []*action.ViewAction `xorm:"-"`
-	Styles  []*style.Style       `xorm:"-"`
+	Locale  locale.Locale
+	Fields  []*field.Field
+	Actions []*action.ViewAction
+	Styles  []*style.Style
+	Data    []interface{}
 }
 type CardSlice []*Card
 

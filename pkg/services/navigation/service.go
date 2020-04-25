@@ -82,20 +82,6 @@ func (s *NavigationService) GetNavigation(orgId int64, lang string) ([]*Folder, 
 		result = append(result, &fd)
 	}
 	sort.Sort(FolderSlice(result))
-	//arrange folder seq
-	// for idx, fd := range result {
-	// 	if fd.Seq != int32(idx*2+1) {
-	// 		fd.Seq = int32(idx*2 + 1)
-	// 		seqCmd := folder.UpdateFolderSeqCommand{
-	// 			FolderId: fd.Id,
-	// 			Seq:      fd.Seq,
-	// 			OrgId:    orgId,
-	// 		}
-	// 		if err := bus.Dispatch(&seqCmd); err != nil {
-	// 			return result, err
-	// 		}
-	// 	}
-	// }
 	return result, nil
 }
 

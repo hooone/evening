@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { getDvaApp } from 'umi';
 import styles from './index.less';
 import { ConfigProvider, PageHeader, Breadcrumb, Switch, Divider, Layout, Menu, Radio } from 'antd';
-
+import {findAttribute} from '@/util'
 import Navigation from '@/components/Navigation';
 import PageHead from '@/components/PageHead';
 import PageContent from '@/components/PageContent';
@@ -12,20 +12,6 @@ import ConfigDrawer from '@/components/configuration/ConfigDrawer';
 const { Content, Header, Sider } = Layout;
 
 class Index extends Component {
-  findAttribute = (ele, attr) => {
-    if (!ele)
-      return '';
-    while (!ele.getAttribute(attr)) {
-      if (ele.id === 'root')
-        return '';
-      else {
-        ele = ele.parentElement;
-      }
-      if (!ele)
-        return '';
-    }
-    return ele.getAttribute(attr);
-  }
   getAllData = (ele, attr) => {
     if (!ele)
       return '';
@@ -60,7 +46,7 @@ class Index extends Component {
     else
       left = drawing.scrollLeft + event.clientX
     top = drawing.scrollTop + event.clientY
-    let v = this.findAttribute(event.target, "data-contextmenu")
+    let v = findAttribute(event.target, "data-contextmenu")
     let record = this.getAllData(event.target, "data-contextmenu")
     let app = getDvaApp();
     app._store.dispatch({

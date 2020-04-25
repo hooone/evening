@@ -77,5 +77,7 @@ func (hs *HTTPServer) registerRoutes() {
 		actionRoute.Post("/delete", bind(dtos.DeleteTestDataForm{}), bind(dtos.LocaleForm{}), Wrap(DeleteTestData))
 	}, reqSignedIn)
 
+	r.Post("/api/renderdata", bind(dtos.LocaleForm{}), Wrap(hs.RenderData))
+
 	r.Get("/*", reqSignedIn, hs.Index)
 }

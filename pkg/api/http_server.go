@@ -140,6 +140,7 @@ func (hs *HTTPServer) addMiddlewaresAndStaticRoutes() {
 	m := hs.macaron
 	//绑定静态文件
 	hs.mapStatic(m, setting.StaticRootPath, "dist", "/static")
+	hs.mapStatic(m, setting.StaticRootPath, "render", "/render")
 	// hs.mapStatic(m, setting.StaticRootPath, "robots.txt", "robots.txt")
 
 	//用户身份验证

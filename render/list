@@ -1,0 +1,17 @@
+nav:.umirc.ts
+nav:src/components/Navigation.tsx
+page:src/pages/{page}.tsx
+card:src/components/{card}Card.tsx
+card:src/models/{card}model.ts
+locale:src/locales/en-US.ts
+locale:src/locales/zh-CN.ts
+~:src/models/navigation.ts
+~:src/components/Avatar.tsx
+~:src/global.css
+~:package.json
+~:tsconfig.json
+~:typings.d.ts
+~:.editorconfig
+~:.gitignore
+~:.prettierignore
+~:.prettierrc

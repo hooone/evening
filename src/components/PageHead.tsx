@@ -8,6 +8,7 @@ import { navStateProps } from '@/models/navigation'
 import { globalStateProps } from '@/models/global'
 import { IStore } from '@/store'
 import { getLocaleText } from '@/util'
+import { ExportUmi } from '@/render'
 
 const { Content, Header, Sider } = Layout;
 interface PageHeadProps extends DispatchProp {
@@ -25,7 +26,10 @@ const PageHead = (props: PageHeadProps) => {
     }
     function handleMenuClick(key: ClickParam) {
         if (key.key == "LOGOUT") {
-            window.open('/logout','_self')
+            window.open('/logout', '_self')
+        }
+        else if (key.key === "export") {
+            ExportUmi();
         }
         else {
             handleLocale(key.key)
@@ -35,6 +39,8 @@ const PageHead = (props: PageHeadProps) => {
         <Menu onClick={(value) => { handleMenuClick(value) }}>
             <Menu.Item key="zh-CN">中文</Menu.Item>
             <Menu.Item key="en-US">English</Menu.Item>
+            <Menu.Divider />
+            <Menu.Item key="export">导出</Menu.Item>
             <Menu.Divider />
             <Menu.Item key="LOGOUT">登出</Menu.Item>
         </Menu>

@@ -36,10 +36,6 @@ const DataTable = (props: CardContentProps) => {
             if (action.Type === "UPDATE") {
                 actions.push(action)
             }
-        }
-    )
-    props.card.Actions.forEach(
-        action => {
             if (action.Type === "DELETE") {
                 actions.push(action)
             }

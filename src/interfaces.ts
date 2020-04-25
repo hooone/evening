@@ -21,6 +21,8 @@ export interface IPage {
     Text: string,
     Cards: ICard[],
     Locale: ILocale,
+    FolderLocale: ILocale,
+    Rows: any[],
 }
 export interface ICard {
     Id: number,
@@ -107,7 +109,8 @@ export interface navMoveProps {
 export interface ILocale {
     "zh-CN": string,
     "en-US": string,
-    Default: string,
+    "Default": string,
+    "Name"?: string,
 }
 
 export interface renderStateProps {

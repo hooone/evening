@@ -3,6 +3,7 @@ package navigation
 import (
 	"errors"
 
+	"github.com/hooone/evening/pkg/services/card"
 	"github.com/hooone/evening/pkg/services/locale"
 )
 
@@ -28,6 +29,7 @@ type Page struct {
 	Name     string
 	Text     string
 	Seq      int32
+	Cards    []*card.Card
 	Locale   locale.Locale
 }
 

@@ -2,6 +2,7 @@ package api
 
 import (
 	"fmt"
+	"strconv"
 
 	"github.com/hooone/evening/pkg/api/dtos"
 	"github.com/hooone/evening/pkg/services/navigation"
@@ -17,6 +18,50 @@ func (hs *HTTPServer) GetNavigation(c *dtos.ReqContext, lang dtos.LocaleForm) Re
 		result.Success = false
 		return JSON(200, result)
 	}
+	result.Message = c.SignedInUser.Name
+	result.Data = data
+	result.Success = true
+	return JSON(200, result)
+}
+
+//RenderData get all pages/cards/data
+func (hs *HTTPServer) RenderData(c *dtos.ReqContext, lang dtos.LocaleForm) Response {
+	data, err := hs.NavigationService.GetNavigation(c.OrgId, lang.Language)
+	result := new(CommonResult)
+	if err != nil {
+		result.Data = 1
+		result.Message = fmt.Sprintf("%s", err)
+		result.Success = false
+		return JSON(200, result)
+	}
+
+	for _, folder := range data {
+		for _, page := range folder.Pages {
+			cards, _ := hs.CardService.GetCards(page.Id, "", c.OrgId, lang.Language)
+			for _, card := range cards {
+				for _, act := range card.Actions {
+					if act.Type == "READ" {
+						for _, param := range act.Parameters {
+							if param.Field.Type == "date" || param.Field.Type == "datetime" {
+								nt64, err3 := strconv.ParseInt(param.Default, 10, 64)
+								if err3 != nil {
+									param.Value = 0
+								} else {
+									param.Value = nt64
+								}
+							} else {
+								param.Value = param.Default
+							}
+						}
+						testdata, _ := getTestData(card.Id, act.Parameters)
+						card.Data = testdata
+					}
+				}
+			}
+			page.Cards = cards
+		}
+	}
+
 	result.Message = c.SignedInUser.Name
 	result.Data = data
 	result.Success = true

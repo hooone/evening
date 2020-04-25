@@ -74,6 +74,8 @@ const RectChart = (props: CardContentProps) => {
         y1Axis: { alias: setting.y1Axis && setting.y1Axis.Field ? getLocaleText(setting.y1Axis.Field.Locale) : "" },
         y2Axis: { alias: setting.y2Axis && setting.y2Axis.Field ? getLocaleText(setting.y2Axis.Field.Locale) : "" },
     }
+    console.log(cols)
+    console.log(chartData)
     return (<Chart forceFit={true} height={400} data={chartData} scale={cols} padding={['15%', '10%']}>
         <Tooltip />
         {(setting.xAxis) && (setting.xAxis.Field) && <Axis name="xAxis" title />}
