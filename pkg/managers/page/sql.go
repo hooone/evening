@@ -85,7 +85,8 @@ func CreatePage(cmd *CreatePageCommand) error {
 //UpdatePage 修改页面信息
 func UpdatePage(cmd *UpdatePageCommand) error {
 	page := Page{
-		UpdateAt: time.Now(),
+		Id:    cmd.PageId,
+		OrgId: cmd.OrgId,
 	}
 	success, err := sqlstore.X.Where("id=? and org_id=?", cmd.PageId, cmd.OrgId).Get(&page)
 	if err != nil {
@@ -94,6 +95,7 @@ func UpdatePage(cmd *UpdatePageCommand) error {
 	if !success {
 		return ErrPageNotFound
 	}
+	page.UpdateAt = time.Now()
 	page.Name = cmd.Name
 	_, err = sqlstore.X.Where("id=? and org_id=?", page.Id, cmd.OrgId).Cols("name").Cols("update_at").Update(&page)
 	if err != nil {

@@ -1,6 +1,7 @@
 package navigation
 
 import (
+	"fmt"
 	"sort"
 
 	"github.com/hooone/evening/pkg/bus"
@@ -271,6 +272,7 @@ func (s *NavigationService) UpdatePage(form Page, orgId int64, lang string) erro
 	if err := bus.Dispatch(&cmd); err != nil {
 		return err
 	}
+	fmt.Println("UpdatePage OK")
 	//tree page change folder name
 	query := folder.GetFolderByIDQuery{
 		OrgId:    orgId,
