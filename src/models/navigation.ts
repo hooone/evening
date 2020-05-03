@@ -1,9 +1,8 @@
 import { getLocale, addLocale } from 'umi';
 import { EffectsCommandMap, SubscriptionAPI } from 'dva'
-import reqwest from 'reqwest'
 import { navMoveProps, IFolder } from '@/interfaces'
 import { IStore } from '@/store'
-import { getLocaleText } from '@/util';
+import { getLocaleText, AJAX } from '@/util';
 
 export interface navStateProps {
     Navs: IFolder[],
@@ -46,12 +45,12 @@ export default {
                 let nav: navStateProps = yield handler.select(((state: IStore) => state.nav));
                 pathname = nav.Path
             }
-            const data = yield handler.call(reqwest, {
-                url: '/api/navigation'
-                , type: 'json'
-                , method: 'post'
-                , data: { lang: getLocale(), }
-            });
+
+            const data = yield handler.call(AJAX, '/api/navigation', {});
+            if (!data.Success) {
+                return;
+            }
+
             let folders: IFolder[] = data.Data
             folders.forEach(folder => {
                 if (folder.IsFolder) {
@@ -72,18 +71,16 @@ export default {
 
         *moveNav(action: IMoveNavCommand, handler: EffectsCommandMap) {
             let nav = yield handler.select((state: IStore) => state.nav)
-            const move = yield handler.call(reqwest, {
-                url: '/api/navigation/move'
-                , type: 'json'
-                , method: 'post'
-                , data: { lang: getLocale(), ...action }
-            });
-            const data = yield handler.call(reqwest, {
-                url: '/api/navigation'
-                , type: 'json'
-                , method: 'post'
-                , data: { lang: getLocale(), }
-            });
+
+            const move = yield handler.call(AJAX, '/api/navigation/move', action);
+            if (!move.Success) {
+                return;
+            }
+            const data = yield handler.call(AJAX, '/api/navigation', {});
+            if (!move.Success) {
+                return;
+            }
+
             let folders: IFolder[] = data.Data
             folders.forEach(folder => {
                 if (folder.IsFolder) {

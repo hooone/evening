@@ -12,5 +12,7 @@ const zh_CN = {
     delete:"删除",
     cancel:"取消",
     confirm:"确认",
+    min:" 最小值",
+    max:" 最大值",
 }
 export default zh_CN; 

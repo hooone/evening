@@ -1,8 +1,7 @@
-import reqwest from 'reqwest'
 import { getLocale } from 'umi'
 import { EffectsCommandMap } from 'dva'
 import { ICard, IMove } from '@/interfaces'
-import { getLocaleText } from '@/util';
+import { getLocaleText, AJAX } from '@/util';
 import { IStore } from '@/store';
 
 interface actionProps {
@@ -21,13 +20,11 @@ export default {
     effects: {
         *updateSeq(action: actionProps, handler: EffectsCommandMap) {
             yield handler.put({ type: 'draw/cardChanged' });
-            //move card
-            const data = yield handler.call(reqwest, {
-                url: '/api/card/updateSeq'
-                , type: 'json'
-                , method: 'post'
-                , data: action.move
-            });
+            //move card       
+            const data = yield handler.call(AJAX, '/api/card/updateSeq', action.move);
+            if (!data.Success) {
+                return;
+            }
             //flash card list
             let cards: ICard[] = []
             cards = data.Data

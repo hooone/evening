@@ -1,8 +1,8 @@
 import { message } from 'antd'
 import { getLocale, history } from 'umi';
-import reqwest from 'reqwest'
 import { EffectsCommandMap } from 'dva'
 import { IViewAction } from '@/interfaces';
+import { AJAX } from '@/util';
 
 export interface modalStateProps {
     visible: boolean,
@@ -115,44 +115,38 @@ export default {
                 else {
                     url += ("/data/" + action.action.Type.toLowerCase())
                 }
-                const data = yield handler.call(reqwest, {
-                    url: url,
-                    type: 'json',
-                    method: 'post',
-                    data: { lang: getLocale(), ...actionData, ...action.formdata }
-                });
-                if (data.Success) {
-                    yield handler.put({
-                        type: 'cancel',
-                    });
-                    if (action.action.Type === "NAV") {
-                        yield handler.put({
-                            type: 'nav/loadNav',
-                        });
-                        if (data.Data) {
-                            history.push(data.Data)
-                        }
-
-                    }
-                    else if (action.action.Type === "CARD") {
-                        yield handler.put({
-                            type: 'page/loadPage',
-                            Id: action.formdata["PageID"],
-                            Name: action.formdata["PageName"],
-                        });
-                    }
-                    else if (action.action.CardId) {
-                        yield handler.put({
-                            type: 'card_' + action.action.CardId + '/loadData',
-                        });
-                    }
-                }
-                else {
-                    if (data.Message) {
-                        message.error(data.Message);
-                    }
+                
+                const data = yield handler.call(AJAX, url, { ...actionData, ...action.formdata });
+                if (!data.Success) {
                     yield handler.put({ type: 'loading', action: action.action, confirmLoading: false, record: action.formdata });
+                    return;
                 }
+
+                yield handler.put({
+                    type: 'cancel',
+                });
+                if (action.action.Type === "NAV") {
+                    yield handler.put({
+                        type: 'nav/loadNav',
+                    });
+                    if (data.Data) {
+                        history.push(data.Data)
+                    }
+
+                }
+                else if (action.action.Type === "CARD") {
+                    yield handler.put({
+                        type: 'page/loadPage',
+                        Id: action.formdata["PageID"],
+                        Name: action.formdata["PageName"],
+                    });
+                }
+                else if (action.action.CardId) {
+                    yield handler.put({
+                        type: 'card_' + action.action.CardId + '/loadData',
+                    });
+                }
+
             }
 
         }

@@ -3,9 +3,9 @@ import { getDvaApp, getLocale } from 'umi';
 import modelExtend from 'dva-model-extend';
 import { EffectsCommandMap } from 'dva'
 import CardModel from "./card"
-import reqwest from 'reqwest'
 import { IPage, ICard, IFolder } from '@/interfaces'
 import { IStore } from '@/store'
+import { AJAX } from '@/util'
 
 export interface pageStateProps extends IPage {
 
@@ -24,7 +24,6 @@ export default {
     },
     effects: {
         *loadPage(action: pageStateProps, handler: EffectsCommandMap) {
-            console.log("loadPage")
             let cards: ICard[] = []
 
             let pageName = ''
@@ -32,28 +31,22 @@ export default {
             let app = getDvaApp();
             let pathname = app._history.location.pathname
             let route = pathname.split('/')
-            route = route.filter((str:string) => str)
+            route = route.filter((str: string) => str)
             pageName = route.pop() ?? ""
             if (!pageName) {
                 return;
             }
             yield handler.put({ type: 'global/savePathName', PathName: pathname, });
-            const data = yield handler.call(reqwest, {
-                url: '/api/card'
-                , type: 'json'
-                , method: 'post'
-                , data: {
-                    PageID: 0,
-                    PageName: pageName
-                }
+
+            const data = yield handler.call(AJAX, '/api/card', {
+                PageID: 0,
+                PageName: pageName
             });
             if (!data.Success) {
                 yield handler.put({ type: 'savePage', Cards: [], Id: 0, Name: '' });
                 return;
             }
             cards = data.Data
-            console.log(cards)
-
             const states = yield handler.select((state: IStore) => state);
             let lang = getLocale();
             for (var i = 0; i < cards.length; i++) {

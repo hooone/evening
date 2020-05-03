@@ -1,7 +1,7 @@
-import reqwest from 'reqwest'
 import { getLocale, getDvaApp } from 'umi'
 import { EffectsCommandMap } from 'dva'
 import { IViewAction, IValueChange } from '@/interfaces';
+import { AJAX } from '@/util'
 
 export interface actionInfoStateProps extends IViewAction {
     visible: boolean,
@@ -37,22 +37,18 @@ export default {
             let actions: IViewAction[] = []
             if (action.action.Id === 0) {
                 //create action
-                const data = yield handler.call(reqwest, {
-                    url: '/api/action/create'
-                    , type: 'json'
-                    , method: 'post'
-                    , data: { lang: getLocale(), ...action.action }
-                });
+                const data = yield handler.call(AJAX, '/api/action/create', action.action);
+                if (!data.Success) {
+                    return;
+                }
                 actions = data.Data
             }
             else {
                 //update action
-                const data = yield handler.call(reqwest, {
-                    url: '/api/action/update'
-                    , type: 'json'
-                    , method: 'post'
-                    , data: { lang: getLocale(), ...action.action }
-                });
+                const data = yield handler.call(AJAX, '/api/action/update', action.action);
+                if (!data.Success) {
+                    return;
+                }
                 actions = data.Data
             }
             //close sub drawer

@@ -8,6 +8,7 @@ locale:src/locales/zh-CN.ts
 ~:src/models/navigation.ts
 ~:src/components/Avatar.tsx
 ~:src/global.css
+~:src/util.ts
 ~:package.json
 ~:tsconfig.json
 ~:typings.d.ts

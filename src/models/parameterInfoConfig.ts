@@ -1,9 +1,8 @@
 import { getLocale } from 'umi'
-import reqwest from 'reqwest'
 import { EffectsCommandMap } from 'dva'
 import { Datetime2Offset, Date2Offset, Offset2Date, Offset2Datetime } from '@/util'
 import { IValueChange, IParameter, IViewAction, CommonResult } from '@/interfaces'
-import { getLocaleText } from '@/util';
+import { getLocaleText, AJAX } from '@/util';
 
 export interface parameterStateProps {
     cardId: number,
@@ -62,12 +61,12 @@ export default {
     effects: {
         *load(action: parameterStateProps, handler: EffectsCommandMap) {
             yield handler.put({ type: 'close' });
-            const data: CommonResult = yield handler.call(reqwest, {
-                url: '/api/parameter'
-                , type: 'json'
-                , method: 'post'
-                , data: { ActionId: action.actionId }
-            });
+
+            const data = yield handler.call(AJAX, '/api/parameter', { ActionId: action.actionId });
+            if (!data.Success) {
+                return;
+            }
+
             let params: IParameter[] = data.Data;
             params.forEach(param => {
                 param.Field.Text = getLocaleText(param.Field.Locale)
@@ -93,12 +92,12 @@ export default {
                     param.Default = ofSp.join("||")
                 }
             })
-            const data = yield handler.call(reqwest, {
-                url: '/api/parameter/update'
-                , type: 'json'
-                , method: 'post'
-                , data: { CardId: action.cardId, Data: JSON.stringify(action.parameters) }
-            });
+
+            const data = yield handler.call(AJAX, '/api/parameter/update', { CardId: action.cardId, Data: JSON.stringify(action.parameters) });
+            if (!data.Success) {
+                return;
+            }
+
             let actions: IViewAction[] = data.Data
             let lang = getLocale()
             actions.forEach(f => {

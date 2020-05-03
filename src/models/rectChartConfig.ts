@@ -1,8 +1,7 @@
 
 import { getLocale } from 'umi';
-import reqwest from 'reqwest'
 import { ICard, IValueChange, IField, IStyle } from '@/interfaces';
-import { getLocaleText } from '@/util';
+import { getLocaleText, AJAX } from '@/util';
 import { EffectsCommandMap, SubscriptionAPI } from 'dva'
 
 export interface rectChartStateProps {
@@ -112,14 +111,12 @@ export default {
                     f.Value = action.y2Color
                 }
             })
-            const data = yield handler.call(reqwest, {
-                url: '/api/style/update'
-                , type: 'json'
-                , method: 'post'
-                , data: {
-                    Data: JSON.stringify(action.Styles)
-                }
-            });
+            
+            const data = yield handler.call(AJAX, '/api/style/update', { Data: JSON.stringify(action.Styles) });
+            if (!data.Success) {
+                return;
+            }
+
             if (data.Data === 0) {
                 yield handler.put({ type: 'save' });
             }

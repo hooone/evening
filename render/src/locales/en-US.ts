@@ -12,5 +12,7 @@ const en_US = {
     delete:"delete",
     cancel:"cancel",
     confirm:"confirm",
+    min:" min",
+    max:" max",
 }
 export default en_US; 

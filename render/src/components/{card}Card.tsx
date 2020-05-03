@@ -2,8 +2,8 @@ import React from 'react';
 import { Card, Table, Divider, Descriptions, Empty, Row, Col, Statistic, Modal, Button, Form, InputNumber, Input, Select, DatePicker } from 'antd';
 import { connect, useIntl } from 'umi';
 import { Chart, Geom, Axis, Tooltip, Legend, Coord } from 'bizcharts';
-import moment from 'moment';
 import { UploadOutlined, PlusOutlined, EditOutlined, SettingOutlined, SearchOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
+const { confirm } = Modal;
 
 const <%- card.Name.replace(card.Name[0],card.Name[0].toUpperCase()) %>Card = (props: any) => {
     const intl = useIntl();
@@ -302,11 +302,38 @@ interface ISeriesData {
             render: (text: any, record: any) => (
                 <div>
                     <% card.Actions.filter(act=>(act.Type=="UPDATE"||act.Type=="DELETE")).forEach(
-                    (action, idx) => {%>
+                    (action, idx) => {
+                    let needInput=false;
+                    action.Parameters.forEach(param=>{
+                        needInput=needInput||(param.IsEditable&&param.IsVisible)
+                    })
+                    %>
                 <% if(idx>0) {%>
                     <%-'<Divider type="vertical" />' %>
                 <%}%>
+                    <% if (!needInput){%>
+                    <% if (!action.DoubleCheck){%>
+                    <%-'<span onClick={() => { props.dispatch({ type: "'+card.Name+'model/'+action.Name+'", "record": record }) }} style={{ color: "rgb(64,144,255)", cursor: "pointer" }}>' %>
+                    <%} else {%>
+                    <%-'<span onClick={() => { '%>
+                        <%-'confirm({'%>
+                            <%-'title: (<span>'%>
+                                <%-'<span>{intl.formatMessage({ id: "confirm", })}'%>
+                                <%-'</span>'%>
+                                <%-'<span>{intl.formatMessage({ id: "'+action.Name+'", })} </span>'%>
+                            <%-'</span>),'%>
+                            <%-'icon: <ExclamationCircleOutlined />,'%>
+                            <%-'onOk() {'%>
+                                <%-'props.dispatch({ type: "'+card.Name+'model/'+action.Name+'", "record": record })'%>
+                            <%-'},'%>
+                        <%-'})'%>
+                    <%-'}}'%>
+                        <%-'style={{ color: "rgb(64,144,255)", cursor: "pointer" }}>' %>
+                  
+                    <%}%>    
+                    <%} else {%>
                     <%-'<span onClick={() => { props.dispatch({ type: "'+card.Name+'model/'+action.Name+'ModalShow", "record": record }) }} style={{ color: "rgb(64,144,255)", cursor: "pointer" }}>' %>
+                    <%}%>
                         <%- '{intl.formatMessage({ id: "'+action.Locale.Name+'" })}' %>
                     <%-"</span>" %>
                         <%}
@@ -319,6 +346,38 @@ interface ISeriesData {
         <div>
             <Card title={<%- 'intl.formatMessage({ id: "'+card.Locale.Name+'" })' %>} className="tableCard"
                 extra={<div>
+                <% card.Actions.forEach(action=>{ 
+                    if(action.Type === "CREATE"){
+                    let needInput=false;
+                    action.Parameters.forEach(param=>{
+                        needInput=needInput||(param.IsEditable&&param.IsVisible)
+                    })%>
+                    <%- "<Button icon={<PlusOutlined />} " %>
+                        <% if(true) { %>
+                        <%- 'onClick={() => { props.dispatch({ type: "'+card.Name+'model/'+action.Name+'ModalShow" }) }} >' %>
+                        <% }else{%>
+                        <% if(!action.DoubleCheck){%>
+                        <%- 'onClick={() => { props.dispatch({ type: "'+card.Name+'model/'+action.Name+'" }) }} >' %>
+                        <% }else{%>
+                        <%- 'onClick={() => { ' %>
+                            <%-'confirm({'%>
+                                <%-'title: (<span>'%>
+                                    <%-'<span>{intl.formatMessage({ id: "confirm", })}'%>
+                                    <%-'</span>'%>
+                                    <%-'<span>{intl.formatMessage({ id: "'+action.Name+'", })} </span>'%>
+                                <%-'</span>),'%>
+                                <%-'icon: <ExclamationCircleOutlined />,'%>
+                                <%-'onOk() {'%>
+                                    <%-'props.dispatch({ type: "'+card.Name+'model/'+action.Name+'" })'%>
+                                <%-'},'%>
+                            <%-'})'%>
+                        <%- '}}>' %>
+                        <%}%>
+                        <%}%>
+                        <%- '{intl.formatMessage({ id: "'+action.Locale.Name+'", })}' %>
+                    <%- "</Button>" %>
+                <%  }}) %>
+
                     <Button icon={<SearchOutlined />}
                         onClick={() => { props.dispatch({ type: "<%- card.Name %>model/ReadModalShow" }) }}>
                         {intl.formatMessage({ id: "read", })}
@@ -339,36 +398,61 @@ interface ISeriesData {
     if(needInput){%>
             <%- '<Modal' %>
                 <%- 'title={intl.formatMessage({ id: "'+action.Locale.Name+'" })}' %>
-                <%- 'onCancel={() => { props.dispatch({ type: "'+card.Name+'model/modalcancel" }) }}' %>
-                <%- 'footer={[<Button key="back" onClick={() => { props.dispatch({ type: "'+card.Name+'model/modalcancel" }) }}>{intl.formatMessage({ id: "cancel",})}</Button>,' %>
-                <%- '<Button key="submit" type="primary" onClick={() => { }}>{intl.formatMessage({ id: "confirm",})}</Button>,]}' %>
+                <%- 'onCancel={() => { props.dispatch({ type: "'+card.Name+'model/modalcancel" }) }}'%>
+                <% if(action.DoubleCheck) {%>
+                <%- 'onOk={() => { '%>
+                    <%-'confirm({'%>
+                        <%-'title: (<span>'%>
+                            <%-'<span>{intl.formatMessage({ id: "confirm", })}'%>
+                            <%-'</span>'%>
+                            <%-'<span>{intl.formatMessage({ id: "'+action.Name+'", })} </span>'%>
+                        <%-'</span>),'%>
+                        <%-'icon: <ExclamationCircleOutlined />,'%>
+                        <%-'onOk() {'%>
+                            <%-'props.dispatch({ type: "'+card.Name+'model/'+action.Name+'" })'%>
+                        <%-'},'%>
+                    <%-'})'%>
+                <%-'}}' %>
+                <% }else{%>
+                <%- 'onOk={() => { props.dispatch({ type: "'+card.Name+'model/'+action.Name+'" }) }}' %>
+                <% }%>
+                <%- 'cancelText={intl.formatMessage({ id: "cancel", })}' %>
+                <%- 'okText={intl.formatMessage({ id: "confirm", })}' %>
                 <%- 'visible={props.'+card.Name+'model.'+action.Name+'ModalVisible}>' %>
-                <%- '<Form {...formItemLayout} labelAlign="left">'%>
+                <%- '<Form {...formItemLayout} labelAlign="left" fields={props.'+card.Name+'model.'+action.Name+'FormData}'%>
+                    <%- 'onFieldsChange={(changedFields, allFields) => {'%>
+                        <%- 'props.dispatch({ type: "'+card.Name+'model/'+action.Name+'ModalChange", Fields: allFields });'%>
+                    <%- '}}>'%>
                 <% action.Parameters.forEach(
                     (parameter, idx) => {
                         if (parameter.IsVisible || parameter.IsEditable) {%>
                             <%if (parameter.Field.Type === 'int') {%>
-                    <Form.Item label={intl.formatMessage({ id: "<%- parameter.Field.Locale.Name %>", })} name={"<%- parameter.Field.Name %>"} style={{ marginBottom: '22px' }}>
-                        <InputNumber style={{ width: '100%' }} defaultValue={<%- (parameter.Default==""?"0":parameter.Default) %>} disabled={<%- (parameter.IsEditable?"false":"true") %>} />
+                    <Form.Item label={intl.formatMessage({ id: "<%- parameter.Field.Locale.Name %>", })<%- (parameter.Compare === "gt" || parameter.Compare === "ge")?' + intl.formatMessage({ id: "min", })':((parameter.Compare === "lt" || parameter.Compare === "le")?' + intl.formatMessage({ id: "max", })':'')%>} 
+                        name={"<%- parameter.Field.Name + ((parameter.Compare === 'gt' || parameter.Compare === 'ge')?'_min':((parameter.Compare === 'lt' || parameter.Compare === 'le')?'_max':'')) %>"} style={{ marginBottom: '22px' }}>
+                        <InputNumber style={{ width: '100%' }} disabled={<%- (parameter.IsEditable?"false":"true") %>} />
                     </ Form.Item>
                             <%} else if (parameter.Field.Type === 'datetime') {%>
-                    <Form.Item label={intl.formatMessage({ id: "<%- parameter.Field.Locale.Name %>", })} name={"<%- parameter.Field.Name %>"} style={{ marginBottom: '22px' }}>
-                        <DatePicker style={{ width: '100%' }} defaultValue={moment(<%- 'new Date(new Date().getTime() - '+(parameter.Default==""?"0":parameter.Default)+')' %>, datetimeFormat)} disabled={<%- (parameter.IsEditable?"false":"true") %>} showTime format={datetimeFormat} />
+                    <Form.Item label={intl.formatMessage({ id: "<%- parameter.Field.Locale.Name %>", })<%- (parameter.Compare === "gt" || parameter.Compare === "ge")?' + intl.formatMessage({ id: "min", })':((parameter.Compare === "lt" || parameter.Compare === "le")?' + intl.formatMessage({ id: "max", })':'')%>} 
+                        name={"<%- parameter.Field.Name + ((parameter.Compare === 'gt' || parameter.Compare === 'ge')?'_min':((parameter.Compare === 'lt' || parameter.Compare === 'le')?'_max':'')) %>"} style={{ marginBottom: '22px' }}>
+                        <DatePicker style={{ width: '100%' }} disabled={<%- (parameter.IsEditable?"false":"true") %>} showTime format={datetimeFormat} />
                     </ Form.Item>
                             <%} else if (parameter.Field.Type === 'date') {%>
-                    <Form.Item label={intl.formatMessage({ id: "<%- parameter.Field.Locale.Name %>", })} name={"<%- parameter.Field.Name %>"} style={{ marginBottom: '22px' }}>
-                        <DatePicker style={{ width: '100%' }} defaultValue={moment(<%- 'new Date(new Date().getTime() - '+(parameter.Default==""?"0":parameter.Default)+')' %>, dateFormat)} disabled={<%- (parameter.IsEditable?"false":"true") %>} format={dateFormat} />
+                    <Form.Item label={intl.formatMessage({ id: "<%- parameter.Field.Locale.Name %>", })<%- (parameter.Compare === "gt" || parameter.Compare === "ge")?' + intl.formatMessage({ id: "min", })':((parameter.Compare === "lt" || parameter.Compare === "le")?' + intl.formatMessage({ id: "max", })':'')%>} 
+                        name={"<%- parameter.Field.Name + ((parameter.Compare === 'gt' || parameter.Compare === 'ge')?'_min':((parameter.Compare === 'lt' || parameter.Compare === 'le')?'_max':'')) %>"} style={{ marginBottom: '22px' }}>
+                        <DatePicker style={{ width: '100%' }} disabled={<%- (parameter.IsEditable?"false":"true") %>} format={dateFormat} />
                     </ Form.Item>
                             <%}else if (parameter.Field.Type === 'bool') {%>
-                    <Form.Item label={intl.formatMessage({ id: "<%- parameter.Field.Locale.Name %>", })} name={"<%- parameter.Field.Name %>"} style={{ marginBottom: '22px' }}>
-                        <Select defaultValue={"<%- parameter.Default %>"} disabled={<%- (parameter.IsEditable?"false":"true") %>} style={{ width: '100%' }}>
+                    <Form.Item label={intl.formatMessage({ id: "<%- parameter.Field.Locale.Name %>", })<%- (parameter.Compare === "gt" || parameter.Compare === "ge")?' + intl.formatMessage({ id: "min", })':((parameter.Compare === "lt" || parameter.Compare === "le")?' + intl.formatMessage({ id: "max", })':'')%>} 
+                        name={"<%- parameter.Field.Name + ((parameter.Compare === 'gt' || parameter.Compare === 'ge')?'_min':((parameter.Compare === 'lt' || parameter.Compare === 'le')?'_max':'')) %>"} style={{ marginBottom: '22px' }}>
+                        <Select disabled={<%- (parameter.IsEditable?"false":"true") %>} style={{ width: '100%' }}>
                             <Option value="true">{intl.formatMessage({ id: 'yes'})}</Option>
                             <Option value="false">{intl.formatMessage({ id: 'no'})}</Option>
                         </Select>
                     </ Form.Item>
                             <%}else {%>
-                    <Form.Item label={intl.formatMessage({ id: "<%- parameter.Field.Locale.Name %>", })} name={"<%- parameter.Field.Name %>"} style={{ marginBottom: '22px' }}>
-                        <Input defaultValue={"<%- parameter.Default %>"} disabled={<%- (parameter.IsEditable?"false":"true") %>} />
+                    <Form.Item label={intl.formatMessage({ id: "<%- parameter.Field.Locale.Name %>", })<%- (parameter.Compare === "gt" || parameter.Compare === "ge")?' + intl.formatMessage({ id: "min", })':((parameter.Compare === "lt" || parameter.Compare === "le")?' + intl.formatMessage({ id: "max", })':'')%>} 
+                        name={"<%- parameter.Field.Name + ((parameter.Compare === 'gt' || parameter.Compare === 'ge')?'_min':((parameter.Compare === 'lt' || parameter.Compare === 'le')?'_max':'')) %>"} style={{ marginBottom: '22px' }}>
+                        <Input disabled={<%- (parameter.IsEditable?"false":"true") %>} />
                     </ Form.Item>
                             <%}%>
                             <%}

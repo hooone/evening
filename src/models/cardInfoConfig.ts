@@ -1,8 +1,7 @@
 
 import { getLocale } from 'umi';
-import reqwest from 'reqwest'
 import { ICard, IValueChange } from '@/interfaces';
-import { getLocaleText } from '@/util';
+import { getLocaleText, AJAX } from '@/util';
 import { EffectsCommandMap, SubscriptionAPI } from 'dva'
 import { showRectChartConfigCommand } from './rectChartConfig'
 import { showPointChartConfigCommand } from './pointChartConfig'
@@ -29,20 +28,17 @@ export default {
   },
   effects: {
     *confirm(action: actionProps, handler: EffectsCommandMap) {
-      const data = yield handler.call(reqwest, {
-        url: '/api/card/update'
-        , type: 'json'
-        , method: 'post'
-        , data: {
-          lang: getLocale(),
-          Id: action.card.Id,
-          Name: action.card.Name,
-          Style: action.card.Style,
-          Text: action.card.Text,
-          Width: action.card.Width,
-          Pos: action.card.Pos,
-        }
+      const data = yield handler.call(AJAX, '/api/card/update', {
+        Id: action.card.Id,
+        Name: action.card.Name,
+        Style: action.card.Style,
+        Text: action.card.Text,
+        Width: action.card.Width,
+        Pos: action.card.Pos,
       });
+      if (!data.Success) {
+        return;
+      }
       let card: ICard = data.Data;
       card.Text = getLocaleText(card.Locale)
 

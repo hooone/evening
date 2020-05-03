@@ -1,9 +1,8 @@
 import { getDvaApp, getLocale } from 'umi';
-import reqwest from 'reqwest'
 import { EffectsCommandMap, SubscriptionAPI } from 'dva'
 import { ICard } from '@/interfaces'
 import { IStore } from '@/store'
-import { Datetime2Offset, Date2Offset, Offset2Date, Offset2Datetime } from '@/util'
+import { AJAX, Datetime2Offset, Date2Offset, Offset2Date, Offset2Datetime } from '@/util'
 
 export interface cardStateProps extends ICard {
 }
@@ -34,12 +33,10 @@ const CardModel = {
     },
     effects: {
         *loadCard(action: loadProps, handler: EffectsCommandMap) {
-            const data = yield handler.call(reqwest, {
-                url: '/api/card/getById'
-                , type: 'json'
-                , method: 'post'
-                , data: { CardId: action.cardId }
-            });
+            const data = yield handler.call(AJAX, '/api/card/getById', { CardId: action.cardId });
+            if (!data.Success) {
+                return;
+            }
             let card: ICard = data.Data
             if (card !== null && card.Actions !== undefined) {
                 card.Actions.forEach(
@@ -74,19 +71,17 @@ const CardModel = {
                 if (parameter.Field.Type === 'datetime') {
                     params['param' + idx] = Offset2Datetime(parameter.Default)
                 }
-                else if(parameter.Field.Type==='date'){
+                else if (parameter.Field.Type === 'date') {
                     params['param' + idx] = Offset2Date(parameter.Default)
                 }
                 else {
                     params['param' + idx] = parameter.Default
                 }
             })
-            const data = yield handler.call(reqwest, {
-                url: '/data/read'
-                , type: 'json'
-                , method: 'post'
-                , data: { lang: getLocale(), ...params }
-            });
+            const data = yield handler.call(AJAX, '/data/read', params);
+            if (!data.Success) {
+                return;
+            }
             yield handler.put({ type: 'saveData', data: data.Data });
         }
     },

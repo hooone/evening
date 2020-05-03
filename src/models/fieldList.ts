@@ -1,8 +1,7 @@
-import reqwest from 'reqwest'
 import { getLocale } from 'umi'
 import { EffectsCommandMap } from 'dva'
 import { IField, IValueChange, IMove } from '@/interfaces';
-import { getLocaleText } from '@/util';
+import { getLocaleText, AJAX } from '@/util';
 
 interface showProps {
     field: IField,
@@ -34,12 +33,10 @@ export default {
         *deleteField(action: showProps, handler: EffectsCommandMap) {
             if (action.field.Id !== 0) {
                 //create field
-                const data = yield handler.call(reqwest, {
-                    url: '/api/field/delete'
-                    , type: 'json'
-                    , method: 'post'
-                    , data: action.field
-                });
+                const data = yield handler.call(AJAX, '/api/field/delete', action.field);
+                if (!data.Success) {
+                    return;
+                }
                 //flash field list
                 let fields: IField[] = data.Data
                 fields.forEach(f => {
@@ -50,12 +47,10 @@ export default {
         },
         *updateSeq(action: updateSeqProps, handler: EffectsCommandMap) {
             //move field
-            const data = yield handler.call(reqwest, {
-                url: '/api/field/updateSeq'
-                , type: 'json'
-                , method: 'post'
-                , data: action.move
-            });
+            const data = yield handler.call(AJAX, '/api/field/updateSeq', action.move);
+            if (!data.Success) {
+                return;
+            }
             //flash field list
             let fields: IField[] = data.Data
             fields.forEach(f => {

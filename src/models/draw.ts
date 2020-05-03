@@ -1,8 +1,7 @@
 import { getLocale } from 'umi';
 import { message } from 'antd'
 import { EffectsCommandMap } from 'dva'
-import reqwest from 'reqwest'
-import { getLocaleText } from '@/util'
+import { getLocaleText,AJAX } from '@/util'
 import { ICard } from '@/interfaces';
 import { showRectChartConfigCommand } from './rectChartConfig'
 import { showPointChartConfigCommand } from './pointChartConfig'
@@ -102,16 +101,9 @@ export default {
     },
     effects: {
         *loadDraw(action: ILoadDrawCommand, handler: EffectsCommandMap) {
-            const data = yield handler.call(reqwest, {
-                url: '/api/card/getById'
-                , type: 'json'
-                , method: 'post'
-                , data: { lang: getLocale(), CardId: action.cardId }
-            });
+            const data = yield handler.call(AJAX, '/api/card/getById', { CardId: action.cardId });
             if (!data.Success) {
-                if (data.Message)
-                    message.error(data.Message)
-                return
+                return;
             }
             let card: ICard = data.Data;
             if (!card || !card.Id) {

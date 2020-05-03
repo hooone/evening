@@ -1,8 +1,7 @@
-import reqwest from 'reqwest'
 import { getLocale } from 'umi'
 import { EffectsCommandMap } from 'dva'
 import { IField, IValueChange } from '@/interfaces';
-import { Datetime2Offset, Date2Offset, Offset2Date, Offset2Datetime } from '@/util'
+import { AJAX, Datetime2Offset, Date2Offset, Offset2Date, Offset2Datetime } from '@/util'
 
 interface showProps {
     field: IField,
@@ -58,23 +57,19 @@ export default {
                 action.field.Default = ofSp.join("||")
             }
             if (action.field.Id === 0) {
-                //create field
-                const data = yield handler.call(reqwest, {
-                    url: '/api/field/create'
-                    , type: 'json'
-                    , method: 'post'
-                    , data: { lang: getLocale(), ...action.field }
-                });
+                //create field          
+                const data = yield handler.call(AJAX, '/api/field/create', action.field);
+                if (!data.Success) {
+                    return;
+                }
                 fields = data.Data
             }
             else {
-                //update field
-                const data = yield handler.call(reqwest, {
-                    url: '/api/field/update'
-                    , type: 'json'
-                    , method: 'post'
-                    , data: { lang: getLocale(), ...action.field }
-                });
+                //update field   
+                const data = yield handler.call(AJAX, '/api/field/update', action.field);
+                if (!data.Success) {
+                    return;
+                }
                 fields = data.Data
             }
             //close sub drawer
