@@ -379,7 +379,18 @@ interface ISeriesData {
                 <%  }}) %>
 
                     <Button icon={<SearchOutlined />}
-                        onClick={() => { props.dispatch({ type: "<%- card.Name %>model/ReadModalShow" }) }}>
+                    <% card.Actions.forEach(action=>{ 
+                        if(action.Type === "READ"){
+                        let needInput=false;
+                        action.Parameters.forEach(param=>{
+                            needInput=needInput||(param.IsEditable&&param.IsVisible)
+                        })%>
+                        <% if(needInput) {%>
+                        <%- 'onClick={() => { props.dispatch({ type: "'+ card.Name +'model/ReadModalShow" }) }}>'  %>
+                        <% }else {%>
+                        <%- 'onClick={() => { props.dispatch({ type: "'+ card.Name +'model/Read" }) }}>'  %>
+                        <% } %>
+                        <% }}) %>
                         {intl.formatMessage({ id: "read", })}
                     </Button>
                 </div>}>

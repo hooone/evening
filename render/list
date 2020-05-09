@@ -3,6 +3,7 @@ nav:src/components/Navigation.tsx
 page:src/pages/{page}.tsx
 card:src/components/{card}Card.tsx
 card:src/models/{card}model.ts
+card:mock/{card}.ts
 locale:src/locales/en-US.ts
 locale:src/locales/zh-CN.ts
 ~:src/models/navigation.ts

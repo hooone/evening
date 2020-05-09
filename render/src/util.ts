@@ -3,7 +3,7 @@ import { message } from 'antd';
 import { getLocale } from 'umi';
 import reqwest from 'reqwest'
 
-interface CommonResult {
+export interface CommonResult {
     Success: boolean,
     Data: any,
     Message: string,

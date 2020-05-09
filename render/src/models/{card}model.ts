@@ -1,7 +1,6 @@
-
-import { EffectsCommandMap } from 'dva'
+import { EffectsCommandMap, SubscriptionAPI } from 'dva'
 import moment from 'moment';
-import { AJAX } from '@/util';
+import { AJAX, CommonResult } from '@/util';
 export interface <%- card.Name %> {
     <% card.Fields.forEach(
         field => {%>
@@ -14,7 +13,7 @@ const datetimeFormat = 'YYYY-MM-DD HH:mm:ss';
 export default {
     namespace: '<%- card.Name %>model',
     state: {
-        "Data": <%- JSON.stringify(card.Data) %>,
+        "Data": [],
         <% card.Actions.forEach(action=>{
             let needInput=false;
             action.Parameters.forEach(param=>{
@@ -44,9 +43,9 @@ export default {
         <%}})%>
     },
     reducers: {
-        save(state: any, action: user[]) {
+        save(state: any, action: any) {
             return {
-                "Data": action,
+                "Data": action.Data,
                 <% card.Actions.forEach(action=>{
                     let needInput=false;
                     action.Parameters.forEach(param=>{
@@ -158,7 +157,15 @@ export default {
             <% })%>
             <%- '}' %>
             <%- 'console.log(formdata)' %>
-            <%- 'AJAX("/'+card.Name+'/'+action.Name+'", formdata);' %>
+            <%- 'let result: CommonResult = yield AJAX("/'+card.Name+'/'+action.Name+'", formdata);' %>
+            <%- 'if (!result.Success) {' %>
+                <%- 'return' %>
+            <%- '}' %>
+            <% if(action.Type==="READ"){ %>
+            <%- 'yield handler.put({ type: "save", Data: result.Data });' %>
+            <% }else {%>
+            <%- 'yield handler.put({ type: "Read" });' %>
+            <% } %>
         <%- "},"%>
         <% }else{ %>
         <%- "*"+action.Name+"(action: any, handler: EffectsCommandMap) {" %>
@@ -178,11 +185,24 @@ export default {
             <% })%>
             <%- '}' %>
             <%- 'console.log(formdata)' %>
-            <%- 'AJAX("/'+card.Name+'/'+action.Name+'", formdata);' %>
+            <%- 'let result: CommonResult = yield AJAX("/'+card.Name+'/'+action.Name+'", formdata);' %>
+            <%- 'if (!result.Success) {' %>
+                <%- 'return' %>
+            <%- '}' %>
+            <% if(action.Type==="READ"){ %>
+            <%- 'yield handler.put({ type: "save", Data: result.Data });' %>
+            <% }else {%>
+            <%- 'yield handler.put({ type: "Read" });' %>
+            <% } %>
         <%- "},"%>
         <% }%>
                 <%}
         ) %>
     },
+    subscriptions: {
+        setup(handler: SubscriptionAPI) {
+            handler.dispatch({ type: "Read" });
+        },
+    }
 };
 
