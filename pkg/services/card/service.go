@@ -325,6 +325,9 @@ func (s *CardService) UpdateCard(form Card, orgId int64, lang string) error {
 		Width:  form.Width,
 		Pos:    form.Pos,
 	}
+	if (24 - cmd.Pos) < cmd.Width {
+		cmd.Width = 24 - cmd.Pos
+	}
 	if err := bus.Dispatch(&cmd); err != nil {
 		return err
 	}

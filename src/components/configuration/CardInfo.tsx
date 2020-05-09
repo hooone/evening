@@ -83,11 +83,11 @@ const CardInfo = (props: CardInfoProps) => {
                 </Form.Item>
                 <Form.Item
                     label={intl.formatMessage({
-                        id: 'width',
+                        id: 'pos4left',
                     })}
                 >
-                    <Select onChange={(value) => { onChange("Width", value) }}
-                        value={props.cardInfoConfig.Width + ""} >
+                    <Select onChange={(value) => { onChange("Pos", value) }}
+                        value={props.cardInfoConfig.Pos + ""} >
                         <Option value="2">8.3%</Option>
                         <Option value="4">16.7%</Option>
                         <Option value="6">25%</Option>
@@ -104,11 +104,11 @@ const CardInfo = (props: CardInfoProps) => {
                 </Form.Item>
                 <Form.Item
                     label={intl.formatMessage({
-                        id: 'pos4left',
+                        id: 'width',
                     })}
                 >
-                    <Select onChange={(value) => { onChange("Pos", value) }}
-                        value={props.cardInfoConfig.Pos + ""} >
+                    <Select onChange={(value) => { onChange("Width", value) }}
+                        value={props.cardInfoConfig.Width + ""} >
                         <Option value="2">8.3%</Option>
                         <Option value="4">16.7%</Option>
                         <Option value="6">25%</Option>

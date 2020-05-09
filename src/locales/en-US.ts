@@ -34,7 +34,7 @@ const en_US = {
     movebox: "move position",
     width: "width",
     property: "property",
-    pos4left: "position from left",
+    pos4left: "offset from left",
     left: "left",
     right: "right",
     up: "up",

@@ -123,7 +123,7 @@ function handler(folders: IFolder[]) {
             })
         })
     })
-    locales = locales.sort(function (a, b) { return a.Name.localeCompare(b.Name) })
+    locales = locales.sort(function (a: any, b: any) { return a.Name.localeCompare(b.Name) })
     console.log(folders)
     render(folders, locales)
 }

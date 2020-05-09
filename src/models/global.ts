@@ -17,7 +17,7 @@ export default {
         changeLocale(state: globalStateProps, action: globalStateProps) {
             let newState = JSON.parse(JSON.stringify(state))
             newState.lang = action.lang
-            setLocale(action.lang, false);
+            setLocale(action.lang, true);
             return newState
         },
         saveUser(state: globalStateProps, action: globalStateProps) {
