@@ -20,6 +20,7 @@ interface setting {
     y2Color?: string,
 }
 const RectChart = (props: CardContentProps) => {
+    const intl = useIntl();
     // convert styles to setting
     let setting: setting = {
     }
@@ -40,6 +41,13 @@ const RectChart = (props: CardContentProps) => {
             setting.y2Color = st.Value
         }
     })
+    if (!setting.xAxis?.Field || (!setting.y1Axis?.Field && !setting.y2Axis?.Field)) {
+        return (<p> {intl.formatMessage(
+            {
+                id: 'emptyChart',
+            }
+        )}</p>)
+    }
     let chartData: ISeriesData[] = [];
     if (props.card.data !== undefined) {
         props.card.data.forEach(record => {

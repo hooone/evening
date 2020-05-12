@@ -4,7 +4,7 @@ import reqwest from 'reqwest'
 import JSZip from 'jszip'
 import ejs from 'ejs'
 import { saveAs } from 'file-saver'
-import { IFolder, ICard, ILocale } from './interfaces';
+import { IFolder, ICard, ILocale, IViewAction, IField, IStyle } from './interfaces';
 import page from './models/page'
 
 interface cardCfg {
@@ -16,6 +16,20 @@ interface cardCfg {
 interface rowCfg {
     Id: number,
     Cols: cardCfg[],
+}
+interface rowCfg {
+    Id: number,
+    Cols: cardCfg[],
+}
+interface CardRenderInfo {
+    Name: string,
+    Locale: string,
+    Style: any,
+    Pos: number,
+    Width: number,
+    Seq: number,
+    Fields: IField[],
+    Actions: IViewAction[],
 }
 
 export function ExportUmi() {
@@ -128,6 +142,20 @@ function handler(folders: IFolder[]) {
     render(folders, locales)
 }
 
+interface setting {
+    xAxis?: IStyle,
+    y1Axis?: IStyle,
+    y2Axis?: IStyle,
+}
+interface FolderRender {
+    Name: string,
+    Locale: string,
+    Children: string,
+}
+interface PageRender {
+    Name: string,
+    Locale: string,
+}
 function render(config: IFolder[], localescfg: ILocale[]) {
 
     var zip = new JSZip();
@@ -135,7 +163,142 @@ function render(config: IFolder[], localescfg: ILocale[]) {
     let compcount = 0;
     var reg1 = /(\n[\s\t]*\r*\n)/g;
     var reg2 = /^[\n\r\n\t]*|[\n\r\n\t]*$/g;
+    //source导出
+    let sourceFolder = zip.folder("source");
+    sourceFolder.file("Navigation.json", JSON.stringify(config.map((folder) => {
+        if (folder.IsFolder) {
+            return {
+                "Name": folder.Name,
+                "Locale": folder.Locale.Name,
+                "Type": "Folder",
+                "Children": folder.Pages.map((pg) => {
+                    return {
+                        "Name": pg.Name,
+                        "Locale": pg.Locale.Name,
+                    }
+                })
+            }
+        }
+        else {
+            if (folder.Pages && folder.Pages.length == 1) {
+                return {
+                    "Name": folder.Pages[0].Name,
+                    "Locale": folder.Pages[0].Locale.Name,
+                    "Type": "Page",
+                }
+            }
+            else {
+                return {
+                    "Name": folder.Name,
+                    "Locale": folder.Locale.Name,
+                    "Type": "Page",
+                }
+            }
+        }
+    }), (k: any, v: any) => { return v; }, '    '))
+    config.forEach(folder => {
+        if (folder.Pages) {
+            folder.Pages.forEach(page => {
+                page.Cards.forEach(card => {
+                    let cardRenderInfo: CardRenderInfo = {
+                        Name: card.Name,
+                        Locale: card.Locale.Name ?? card.Name,
+                        Style: {
+                            Type: card.Style,
+                        },
+                        Seq: card.Seq,
+                        Width: card.Width,
+                        Pos: card.Pos,
+                        Fields: card.Fields,
+                        Actions: card.Actions
+                    }
+                    if (card.Style === "POINT") {
+                        card.Styles.forEach(st => {
+                            if (st.Property === "XAXIS" && st.Field) {
+                                cardRenderInfo.Style.xAxis = st.Field.Name
+                            }
+                            else if (st.Property === "Y1AXIS" && st.Field) {
+                                cardRenderInfo.Style.y1Axis = st.Field.Name
+                                cardRenderInfo.Style.y1Color = st.Value
+                            }
+                            else if (st.Property === "Y2AXIS" && st.Field) {
+                                cardRenderInfo.Style.y2Axis = st.Field.Name
+                                cardRenderInfo.Style.y2Color = st.Value
+                            }
+                        })
+                    }
+                    else if (card.Style === "RECT") {
+                        card.Styles.forEach(st => {
+                            if (st.Property === "XAXIS" && st.Field) {
+                                cardRenderInfo.Style.xAxis = st.Field.Name
+                            }
+                            else if (st.Property === "Y1AXIS" && st.Field) {
+                                cardRenderInfo.Style.y1Axis = st.Field.Name
+                                cardRenderInfo.Style.y1Type = st.Value
+                            }
+                            else if (st.Property === "Y2AXIS" && st.Field) {
+                                cardRenderInfo.Style.y2Axis = st.Field.Name
+                                cardRenderInfo.Style.y2Type = st.Value
+                            }
+                        })
+                        card.Styles.forEach(st => {
+                            if (st.Property === "Y1COLOR" && cardRenderInfo.Style.y1Axis) {
+                                cardRenderInfo.Style.y1Color = st.Value
+                            }
+                            else if (st.Property === "Y2COLOR" && cardRenderInfo.Style.y2Axis) {
+                                cardRenderInfo.Style.y2Color = st.Value
+                            }
+                        })
 
+                    }
+                    sourceFolder.file(card.Name + ".json", JSON.stringify(cardRenderInfo, (k: any, v: any) => {
+                        switch (k) {
+                            case 'Fields':
+                                {
+                                    return v.map((f: IField) => {
+                                        return ({
+                                            "Name": f.Name,
+                                            "Locale": f.Locale.Name,
+                                            "Seq": f.Seq,
+                                            "IsVisible": f.IsVisible,
+                                            "Type": f.Type,
+                                            "Filter": f.Filter,
+                                            "Default": f.Default,
+                                        })
+                                    })
+                                }
+                            case 'Actions':
+                                {
+                                    return v.map((a: IViewAction) => {
+                                        return {
+                                            "Name": a.Name,
+                                            "Locale": a.Locale.Name,
+                                            "Type": a.Type,
+                                            "Seq": a.Seq,
+                                            "DoubleCheck": a.DoubleCheck,
+                                            "Parameters": a.Parameters.map((p) => {
+                                                return {
+                                                    "Name": p.Field.Name,
+                                                    "Locale": p.Field.Locale.Name,
+                                                    "Seq": p.Field.Seq,
+                                                    "Type": p.Field.Type,
+                                                    "IsVisible": p.IsVisible,
+                                                    "IsEditable": p.IsEditable,
+                                                    "Default": p.Default,
+                                                    "Compare": p.Compare,
+                                                }
+                                            })
+                                        }
+                                    })
+                                }
+                            default:
+                                return v;
+                        }
+                    }, '    '))
+                })
+            })
+        }
+    })
     reqwest({
         url: '/render/list',
         type: 'text',

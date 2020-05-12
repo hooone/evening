@@ -177,7 +177,7 @@ const DataCard = (props: DataCardProps) => {
     }
     else if (props.card.Style === "RECT") {
         return (<div data-contextmenu="card" data-cardid={props.card.Id}  >
-            <Card key={"tablecard_" + props.card.Id} title={getLocaleText(props.card.Locale)} className="tableCard"
+            <Card key={"tablecard_" + props.card.Id} title={getLocaleText(props.card.Locale)}
                 extra={[
                     <Button key={"card_" + props.card.Id + "_read"} icon={<SearchOutlined />}
                         onClick={() => { handleAction(props.card.Reader, {}) }}>
@@ -202,7 +202,7 @@ const DataCard = (props: DataCardProps) => {
     }
     else if (props.card.Style === "POINT") {
         return (<div data-contextmenu="card" data-cardid={props.card.Id}  >
-            <Card key={"tablecard_" + props.card.Id} title={getLocaleText(props.card.Locale)} className="tableCard"
+            <Card key={"tablecard_" + props.card.Id} title={getLocaleText(props.card.Locale)} 
                 extra={[
                     <Button key={"card_" + props.card.Id + "_read"} icon={<SearchOutlined />}
                         onClick={() => { handleAction(props.card.Reader, {}) }}>
@@ -227,7 +227,7 @@ const DataCard = (props: DataCardProps) => {
     }
     else if (props.card.Style === "DESC") {
         return (<div data-contextmenu="card" data-cardid={props.card.Id}  >
-            <Card key={"tablecard_" + props.card.Id} title={getLocaleText(props.card.Locale)} className="tableCard"
+            <Card key={"tablecard_" + props.card.Id} title={getLocaleText(props.card.Locale)} 
                 extra={[
                     <Button key={"card_" + props.card.Id + "_read"} icon={<SearchOutlined />}
                         onClick={() => { handleAction(props.card.Reader, {}) }}>
@@ -252,7 +252,7 @@ const DataCard = (props: DataCardProps) => {
     }
     else if (props.card.Style === "STAT") {
         return (<div data-contextmenu="card" data-cardid={props.card.Id}  >
-            <Card key={"tablecard_" + props.card.Id} className="tableCard">
+            <Card key={"tablecard_" + props.card.Id} >
                 <Row>
                     <Col span={23}>
                         <StatisticCard
