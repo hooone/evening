@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<!--[if IE 8]> <html lang="zh-CN" class="ie8"> <![endif]-->
+<!--[if IE 9]> <html lang="zh-CN" class="ie9"> <![endif]-->
+<!--[if !IE]><!-->
+<html lang="zh-CN">
+<!--<![endif]-->
+
+<head>
+  <title>evening -- 高效的网页可视化开发工具 | 帮助文档</title>
+  <!-- Meta -->
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="author" content="">
+  <!-- Global CSS -->
+  <link href="css/bootstrap.min.css" rel="stylesheet">
+  <!-- Plugins CSS -->
+  <link href="css/prism.css" rel="stylesheet">
+  <link href="font-awesome/css/font-awesome.css" rel="stylesheet">
+  <!-- Theme CSS -->
+  <link id="theme-style" rel="stylesheet" href="css/styles-2.css">
+  <style type="text/css">
+    .display {
+      display: block;
+      width: 380px;
+      border: 1px solid #666;
+      margin: -56px auto 32px auto;
+      background: #fff;
+      box-shadow: 8px 8px 19px -10px rgba(0, 0, 0, 0.4);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+  </style>
+  <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+  <!--[if lt IE 9]>
+      <script src="https://cdn.bootcss.com/html5shiv/3.7.0/html5shiv.js"></script>
+      <script src="https://cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+</head>
+
+<body data-spy="scroll">
+
+  <!-- ******HEADER****** -->
+  <header id="header" class="header">
+    <div class="container">
+      <h1 class="logo pull-left">
+        <a class="scrollto" href="#promo">
+          <span class="logo-title">evening</span>
+        </a>
+      </h1>
+      <!--//logo-->
+      <nav id="main-nav" class="main-nav navbar-right" role="navigation">
+        <div class="navbar-header">
+          <button class="navbar-toggle" type="button" data-toggle="collapse" data-target="#navbar-collapse">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <!--//nav-toggle-->
+        </div>
+        <!--//navbar-header-->
+        <div class="navbar-collapse collapse" id="navbar-collapse">
+          <ul class="nav navbar-nav">
+            <li class="active nav-item sr-only"><a class="scrollto" href="#promo">首页</a></li>
+            <li class="nav-item"><a class="scrollto" href="#about">关于</a></li>
+            <li class="nav-item"><a class="scrollto" href="#install">入门</a></li>
+            <li class="nav-item"><a class="scrollto" href="#docs">文档</a></li>
+            <li class="nav-item"><a class="scrollto" href="#support">支持</a></li>
+            <li class="nav-item"><a class="scrollto" href="#license">许可证</a></li>
+            <li class="nav-item"><a href="https://github.com/hooone/evening" target="_blank">GitHub</a></li>
+          </ul>
+          <!--//navbar-nav-->
+        </div>
+        <!--//navabr-collapse-->
+      </nav>
+      <!--//main-nav-->
+    </div>
+    <!--//container-->
+  </header>
+  <!--//header-->
+
+  <!-- ******PROMO****** -->
+  <section id="promo" class="promo section offset-header">
+
+    <div class="container text-center">
+      <h2 class="title">
+        <span class="highlight">
+          <span style="font-size: 60%;">&lt;</span>
+          evening
+          <span style="font-size: 60%;">&gt;</span>
+        </span>
+      </h2>
+      <p class="intro" style="letter-spacing: 4px;">高效的网页可视化配置式开发工具</p>
+      <div class="btns">
+        <a class="btn btn-cta-secondary" href="https://live.evening.cool/login" target="_blank">演示</a>
+      </div>
+      <ul class="meta list-inline">
+        <li>&nbsp;</li>
+      </ul>
+      <!--//meta-->
+    </div>
+    <!--//container-->
+    <div class="social-media">
+      <div class="social-media-inner container text-center">
+        <ul class="list-inline"></ul>
+      </div>
+    </div>
+  </section>
+  <!--//promo-->
+
+  <!-- ******ABOUT****** -->
+  <section id="about" class="about section">
+    <div class="container">
+      <h2 class="title text-center">evening 是什么？</h2>
+      <p class="intro text-center">evening是一款高效的网页原型开发工具，帮你用可视化配置的方式生成网页，适合数据管理型网页的设计和开发。</p>
+      <div class="row">
+        <div class="item col-md-4 col-sm-6 col-xs-12">
+          <div class="icon-holder">
+            <i class="fa fa-heart"></i>
+          </div>
+          <div class="content">
+            <h3 class="sub-title">精致的设计模型</h3>
+            <p>抽象出经典数据型网页的核心内容，帮您抓住页面设计的关键。</p>
+          </div>
+          <!--//content-->
+        </div>
+        <!--//item-->
+        <div class="item col-md-4 col-sm-6 col-xs-12">
+          <div class="icon-holder">
+            <i class="fa fa-clock-o"></i>
+          </div>
+          <div class="content">
+            <h3 class="sub-title">快速设计与开发</h3>
+            <p>提高网页设计开发效率，降低网页开发的技术门槛！</p>
+          </div>
+          <!--//content-->
+        </div>
+        <!--//item-->
+        <div class="item col-md-4 col-sm-6 col-xs-12">
+          <div class="icon-holder">
+            <i class="fa fa-code"></i>
+          </div>
+          <div class="content">
+            <h3 class="sub-title">简洁的图形化界面</h3>
+            <p>基于简洁大方的 Ant Design 组件库</p>
+          </div>
+          <!--//content-->
+        </div>
+        <!--//item-->
+        <div class="clearfix visible-md-block visible-lg-block"></div>
+        <div class="item col-md-4 col-sm-6 col-xs-12">
+          <div class="icon-holder">
+            <i class="fa fa-fighter-jet"></i>
+          </div>
+          <div class="content">
+            <h3 class="sub-title">多语言支持</h3>
+            <p>所有的设计文本绑定到locales文件。</p>
+          </div>
+          <!--//content-->
+        </div>
+        <!--//item-->
+        <div class="item col-md-4 col-sm-6 col-xs-12">
+          <div class="icon-holder">
+            <i class="fa fa-thumbs-up"></i>
+          </div>
+          <div class="content">
+            <h3 class="sub-title">支持常用图表</h3>
+            <p>在线设计和调试折线图、柱状图、散点图等常用图表。</p>
+          </div>
+          <!--//content-->
+        </div>
+        <!--//item-->
+        <div class="item col-md-4 col-sm-6 col-xs-12">
+          <div class="icon-holder">
+            <i class="fa fa-flask"></i>
+          </div>
+          <div class="content">
+            <h3 class="sub-title">自定义导出模板</h3>
+            <p>您可以对导出模板进行二次开发，使得生成的代码完全符合您的项目需求。</p>
+          </div>
+          <!--//content-->
+        </div>
+        <!--//item-->
+      </div>
+      <!--//row-->
+    </div>
+    <!--//container-->
+  </section>
+  <!--//about-->
+
+  <!-- ******FEATURES****** -->
+  <section id="features" class="features section">
+    <div class="container text-center">
+
+    </div>
+    <!--//container-->
+  </section>
+  <!--//features-->
+  <section id="install" class="install section">
+    <div class="container">
+      <div class="install-inner">
+        <h2 class="title text-center">入门</h2>
+        <div class="block">
+          <h3 class="sub-title text-center">在线使用</h3>
+          <p>用浏览器打开 <a href="https://live.evening.cool" target="_blank">https://live.evening.cool</a>
+            注册后（不需要手机、邮箱验证）即可访问。</p>
+
+          <h3 class="sub-title text-center">本地部署</h3>
+          <p>下载evening的可执行程序，运行后访问http://localhost:8000 即可。</p>
+          <p>修改配置文件 /conf/defaults.ini，可配置端口、数据库连接等参数。</p>
+
+          <div class="code-block">
+            <!--//Use Prismjs - http://prismjs.com/index.html#basic-usage -->
+            <pre class="language-ini"><code class="language-ini">[database]
+type = mysql
+host = 127.0.0.1:3306
+name = evening
+user = root
+[server]
+protocol = http
+http_port = 8000
+domain = localhost
+            </code></pre>
+          </div>
+          <!--//code-block-->
+        </div>
+        <!--//block-->
+      </div>
+      <!--//install-inner-->
+    </div>
+    <!--//container-->
+  </section>
+  <!--//install-->
+
+  <!-- ******DOCS****** -->
+  <section id="docs" class="docs section">
+    <div class="container">
+      <div class="docs-inner">
+        <h2 class="title text-center">文档</h2>
+        <div class="block">
+          <h3 class="sub-title text-center">导航栏</h3>
+          <ul style="line-height:2.4;vertical-align: top;margin-top: 5px;">
+            <li>支持两层导航栏</li>
+            <li>通过导航栏区域的<code>右键菜单</code>进行配置</li>
+            <li><code>拖动</code>方式调整导航栏顺序</li>
+          </ul>
+        </div>
+        <!--//block-->
+        <div class="block">
+          <h3 class="sub-title text-center">窗体框</h3>
+          <p><code>窗体框</code>是页面布局的基本元素，也是网页模型的基本单元。所有的数据模型、前后端交互、mock data、图表风格等都关联到窗体框。</p>
+          <h4>添加窗体框</h4>
+          <p>右键点击空白区域，通过弹出的右键菜单添加窗体框。</p>
+          <img src="images/createbox.png" width="410" />
+          <h4>设置窗体框属性</h4>
+          <p>点击窗体右上角的齿轮符号，打开右侧的抽屉式<code>配置弹窗</code>。设计人员可以在<code>配置弹窗</code>中修改窗体框属性。<br />
+            其中Name属性必须为英文且无特殊符号。</p>
+          <img src="images/boxconfig1.png" width="350" />
+          =》
+          <img src="images/boxconfig2.png" width="350" />
+          <h4>调整窗体框顺序</h4>
+          <p>在右侧打开的<code>配置弹窗</code>中选择<code>窗体顺序</code>选项卡，上下<code>拖动</code>代表各窗体框的标签，即可调整窗体框的顺序。</p>
+          <img src="images/boxseq.png" width="410" />
+          <h4>删除窗体框</h4>
+          <p>右键点击要删除的窗体框，通过弹出的<code>右键菜单</code>删除窗体。</p>
+          <img src="images/deletebox.png" width="410" />
+        </div>
+        <!--//block-->
+        <div class="block">
+          <h3 class="sub-title text-center">数据模型</h3>
+          <p>每个窗体框对应一个单层的自定义数据模型，级联的数据关联需在后端完成。<br />数据模型在<code>配置弹窗</code>的<code>字段</code>选项卡中配置，支持新增、修改、拖动排序、删除操作。</p>
+          <img src="images/field.png" width="410" />
+
+        </div>
+        <!--//block-->
+        <div class="block">
+          <h3 class="sub-title text-center">筛选器</h3>
+          <p>实际使用时，网页最终用户通过<code>查询</code>按钮修改筛选器的值，点击确定之后网页会向后端触发数据请求。</p>
+          <p>每个窗体支持一个数据筛选器。网页设计时通过<code>配置弹窗</code> =》<code>字段</code> =》<code>修改</code> =》<code>筛选</code>
+            进行配置，可选类型包括全选、准确值、输入范围、输入上限、输入下限。网页会使用该窗体框所有的筛选属性不为全选的字段向后端触发数据请求。</p>
+          <h4>a) 配置筛选字段</h4>
+          <img src="images/filterA.png" width="480" />
+          <h4>b) 点击查询按钮</h4>
+          <img src="images/filterB.png" width="410" />
+          <h4>c) 输入查询参数</h4>
+          <img src="images/filterC.png" width="410" />
+        </div>
+        <!--//block-->
+        <div class="block">
+          <h3 class="sub-title text-center">操作按钮</h3>
+          <p>
+            每个窗体框在新建时默认包含了<b>添加</b>、<b>修改</b>、<b>删除</b>按钮。设计人员可以在<code>配置弹窗</code>的<code>操作</code>选项卡中增加新的操作按钮，或者对已有操作按钮进行调整和删除。
+          </p>
+          <img src="images/action.png" width="410" />
+          <p>在最终用户使用时，部分字段应当是不允许修改的，还有部分字段应当是不可见的。网页设计人员可通过<code>配置弹窗</code> =》<code>操作</code> =》<code>参数</code>进行指定。
+          </p>
+          <h4>a) 配置参数特性</h4>
+          <img src="images/parameterA.png" width="480" />
+          <h4>b) 用户操作界面</h4>
+          <img src="images/parameterB.png" width="410" />
+        </div>
+        <!--//block-->
+        <div class="block">
+          <h3 class="sub-title text-center">图表</h3>
+          <ul>
+            <li>evening目前支持表格、折线图、柱状图、散点图、统计数字标签等窗体框展示类型。</li>
+            <li> 通过<code>配置弹窗</code> =》<code>属性</code> =》<code>图表</code>字段来指定各窗体框的展示类型。</li>
+            <li> 点击确定后再在<code>配置弹窗</code>的<code>样式</code>选项卡中指定图表的横坐标、纵坐标、颜色等特征。</li>
+          </ul>
+          <h4>&nbsp;&nbsp; a) 选择图表类型</h4>
+          <img src="images/chartA.png" width="410" />
+          <h4>&nbsp;&nbsp; b) 配置图表样式</h4>
+          <img src="images/chartB.png" width="410" />
+          <h4>&nbsp;&nbsp; c) 查看图表</h4>
+          <img src="images/chartC.png" width="410" />
+        </div>
+        <!--//block-->
+        <div class="block">
+          <h3 class="sub-title text-center">多语言</h3>
+          <p>点击右上角的用户名，在下拉按钮中选择需要的语言。</p>
+          <p>网页设计时的所有<code>文本</code>(Text)、<code>标题</code>(Title)字段的值都是绑定到<code>当前</code>的语言中的。<br>
+            例如示例中的<b>用户</b>窗体框，在中文环境中设置<code>窗体框属性</code>的<code>标题</code>字段为<b>"用户"</b>，再在英文环境中设置<code>property</code>的<code>title</code>字段为<b>"user"</b>。那么窗体框的标题在中文环境下就是"用户"，在英文环境下就是"user"。
+          </p>
+        </div>
+        <!--//block-->
+
+      </div>
+      <!--//docs-inner-->
+    </div>
+    <!--//container-->
+  </section>
+  <!--//features-->
+
+  <!-- ******SUPPORT****** -->
+  <section id="support" class="support section">
+    <div class="container">
+      <div class="support-inner">
+        <h2 class="title text-center">支持</h2>
+        <!--//block-->
+        <div class="block">
+          <h3 class="sub-title text-center"><a href="https://github.com/hooone/evening/issues" target="_blank">GitHub issues</a></h3>
+          <p>The <a href="https://github.com/hooone/evening/issues" target="_blank">issue tracker</a> is the preferred channel for bug reports,
+            features requests and submitting pull requests.</p>
+        </div>
+        <!--//block-->
+        <div class="block">
+          <h3 class="sub-title text-center"><a href="https://www.evening.cool/wechat.jpg" target="_blank">WeChat</a></h3>
+          <p>有任何的bug、意见、建议，欢迎大家找我。</p>
+        </div>
+        <!--//block-->
+      </div>
+      <!--//support-inner-->
+    </div>
+    <!--//container-->
+  </section>
+  <!--//support-->
+
+  <!-- ******LICENSE****** -->
+  <section id="license" class="license section">
+    <div class="container">
+      <div class="license-inner">
+        <h2 class="title text-center">许可证</h2>
+        <p>Evening is licensed under the Apache License, version 2.0. Information can found here: <a
+            href="http://www.apache.org/licenses/">http://www.apache.org/licenses/</a>.</p>
+      </div>
+      <!--//license-inner-->
+    </div>
+    <!--//container-->
+  </section>
+  <!--//license-->
+
+  <!-- ******FOOTER****** -->
+  <!-- <footer class="footer"> -->
+    <!-- <div class="container text-center"> -->
+      <!-- <small class="copyright">EJS &copy; 2112 <a href="http://twitter.com/mde">Matthew Eernisse</a> ::: Template -->
+        <!-- designed with <i class="fa fa-heart"></i> by <a href="http://themes.3rdwavemedia.com" target="_blank">Xiaoying -->
+          <!-- Riley</a></small> -->
+    <!-- </div> -->
+    <!--//container-->
+  <!-- </footer> -->
+  <!--//footer-->
+
+  <!-- Javascript -->
+  <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://cdn.bootcdn.net/ajax/libs/jquery-migrate/3.3.0/jquery-migrate.min.js"></script>
+  <script src="https://cdn.bootcdn.net/ajax/libs/jquery-easing/1.4.1/jquery.easing.min.js"></script>
+  <script src="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/4.4.1/js/bootstrap.min.js"></script>
+  <script src="https://cdn.bootcdn.net/ajax/libs/jquery-scrollTo/2.1.2/jquery.scrollTo.min.js"></script>
+  <script src="https://cdn.bootcdn.net/ajax/libs/prism/9000.0.1/prism.min.js"></script>
+  <script>
+    $('body').scrollspy({ target: '#header', offset: 400 });
+
+    /* ======= Fixed header when scrolled ======= */
+
+    $(window).on('scroll', function () {
+      $('#header').toggleClass('navbar-fixed-top', $(window).scrollTop() > 50);
+    });
+
+  </script>
+</body>
+
+</html>
