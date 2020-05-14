@@ -19,5 +19,8 @@ export default defineConfig({
     baseNavigator: true,
     baseSeparator: '-',
   },
-  publicPath:"/static/"
+  // antd: {
+  //   dark: true, // 开启暗色主题
+  // },
+  publicPath: '/static/',
 });

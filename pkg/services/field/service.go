@@ -134,12 +134,16 @@ func (s *FieldService) CreateField(form Field, orgId int64, lang string) error {
 		return err
 	}
 	for _, act := range aquery.Result {
+		show := true
+		if act.Type == "DELETE" {
+			show = false
+		}
 		paCmd := parameter.CreateParameterCommand{
 			OrgId:      orgId,
 			ActionId:   act.Id,
 			FieldId:    cmd.Result,
-			IsVisible:  true,
-			IsEditable: true,
+			IsVisible:  show,
+			IsEditable: show,
 			Default:    form.Default,
 		}
 		if err2 := bus.Dispatch(&paCmd); err2 != nil {

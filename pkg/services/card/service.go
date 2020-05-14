@@ -306,7 +306,7 @@ func (s *CardService) CreateCard(pageId int64, pageName string, form Card, orgId
 		Name:        "delete",
 		Text:        "删除",
 		Type:        "DELETE",
-		DoubleCheck: false,
+		DoubleCheck: true,
 	}, orgId, "zh-CN")
 	//create style
 	s.StyleService.CreateStyles(form.Id, orgId, lang)
